@@ -14,6 +14,7 @@ kivy.require("1.0.9")
 Factory.register("ParallaxBG", ParallaxBG)
 Factory.register("ParallaxIMG", ParallaxIMG)
 Factory.register("MainScreen", MainScreen)
+Factory.register("MainCharacter", MainCharacter)
 
 class DemonSlayer(ScreenManager):
   pass
@@ -24,7 +25,6 @@ class DemonSlayerApp(App):
     EventLoop.ensure_window()
     self.window = EventLoop.window
     return DemonSlayer(transition= FadeTransition())
-
 
 if __name__ == "__main__":
   DemonSlayerApp().run()

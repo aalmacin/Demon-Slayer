@@ -1,6 +1,5 @@
 from kivy.uix.widget import Widget
 from kivy.uix.image import Image
-from kivy.clock import Clock
 from kivy.properties import NumericProperty
 
 class ParallaxBG(Widget):
@@ -9,9 +8,8 @@ class ParallaxBG(Widget):
 class ParallaxIMG(Image):
   def __init__(self, **kwargs):
     super(ParallaxIMG, self).__init__(**kwargs)
-    Clock.schedule_interval(self.printer, 0.1)
 
-  def printer(self, dt):
+  def move_parallax(self):
     if self.x >= -self.width:
       self.x -= self.speed
     else:
