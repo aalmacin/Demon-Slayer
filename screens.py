@@ -12,8 +12,14 @@ class StartScreen(Screen):
     self.starter.bind(on_press= self.btn_pressed)
 
   def btn_pressed(self, instance):
-    print self.parent.screen_names
     self.parent.current = "main_screen"
 
 class GameOverScreen(Screen):
-  pass
+  def __init__(self, **kwargs):
+    super(GameOverScreen, self).__init__()
+    self.restarter = Button(text="Click anywhere to play again")
+    self.add_widget(self.restarter)
+    self.restarter.bind(on_press= self.btn_pressed)
+
+  def btn_pressed(self, instance):
+    self.parent.current = "main_screen"
