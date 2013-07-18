@@ -1,9 +1,17 @@
 from kivy.uix.widget import Widget
 from kivy.uix.image import Image
 from kivy.properties import NumericProperty
+from kivy.lang import Builder
 
+Builder.load_file("parallax_bg.kv")
 class ParallaxBG(Widget):
-  pass
+  def __init__(self, **kwargs):
+    super(ParallaxBG, self).__init__(**kwargs)
+    self.move_all()
+
+  def move_all(self):
+    for child in self.children:
+      child.move_parallax()
 
 class ParallaxIMG(Image):
   def __init__(self, **kwargs):

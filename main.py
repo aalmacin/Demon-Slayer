@@ -24,6 +24,7 @@ class DemonSlayerApp(App):
     from kivy.base import EventLoop
     EventLoop.ensure_window()
     self.window = EventLoop.window
+    self.window.size = (1280, 700)
     return DemonSlayer(transition= FadeTransition())
 
 if __name__ == "__main__":
