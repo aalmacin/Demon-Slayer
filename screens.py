@@ -3,6 +3,7 @@ from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from kivy.uix.image import Image
 from kivy.clock import Clock
+from kivy.core.window import Window
 
 class MainScreen(Screen):
   pass
@@ -37,6 +38,14 @@ class MainCharacter(Widget):
     self.root = Widget()
     self.is_running()
 
+    self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+    self._keyboard.bind(on_key_down=self._on_keyboard_down)
+
+
+  def _keyboard_closed(self):
+    self._keyboard.unbind(on_key_down=self._on_keyboard_down)
+    self._keyboard = None
+
   def is_running(self):
     self.current_img = self.running
     self.add_current_img()
@@ -50,5 +59,14 @@ class MainCharacter(Widget):
     self.add_current_img()
 
   def add_current_img(self):
+    self.root.clear_widgets()
     self.root.add_widget(self.current_img)
     self.add_widget(self.root)
+
+  def on_touch_down(self, touch):
+    print "touched"
+    return super(MainCharacter, self).on_touch_down(touch)
+
+  def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+    if keycode[1] == "w":
+      print "hey"
