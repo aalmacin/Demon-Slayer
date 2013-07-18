@@ -22,3 +22,4 @@ class ParallaxIMG(Image):
       self.x -= self.speed
     else:
       self.x = self.width
+      print self.width

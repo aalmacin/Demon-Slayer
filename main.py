@@ -7,6 +7,7 @@ from kivy.factory import Factory
 from parallax_bg import *
 from screens import *
 from kivy.uix.screenmanager import *
+from kivy.base import EventLoop
 
 import kivy
 
@@ -20,11 +21,12 @@ class DemonSlayer(ScreenManager):
   pass
 
 class DemonSlayerApp(App):
+  WIDTH = 1280
+  HEIGHT = 700
   def build(self):
-    from kivy.base import EventLoop
     EventLoop.ensure_window()
     self.window = EventLoop.window
-    self.window.size = (1280, 700)
+    self.window.size = (DemonSlayerApp.WIDTH, DemonSlayerApp.HEIGHT)
     return DemonSlayer(transition= FadeTransition())
 
 if __name__ == "__main__":
