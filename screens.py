@@ -36,10 +36,12 @@ class GameOverScreen(Screen):
     self.parent.current = "main_screen"
 
 class MainCharacter(Widget):
+  RUNNING = "images/KatipuneroRunning.zip"
+  STAND = "images/KatipuneroStand.png"
   def __init__(self, **kwargs):
     super(MainCharacter, self).__init__(**kwargs)
 
-    self.main_char_img = Image(source="images/Skater.png")
+    self.main_char_img = Image(source=MainCharacter.STAND)
     self.main_char_img.pos = (50, 100)
     self.main_char_img.size = (150, 300)
     self.add_widget(self.main_char_img)
@@ -65,17 +67,11 @@ class MainCharacter(Widget):
       self.parent.background.move_all()
 
   def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
-    if keycode[1] == "w":
-      self.main_char_img.source = "images/Skater2.zip"
-      self.moving = True
-    elif keycode[1] == "s":
-      self.main_char_img.source = "images/Skater.zip"
+    if keycode[1] == "d":
+      self.main_char_img.source = MainCharacter.RUNNING
       self.moving = True
 
   def _on_keyboard_up(self, keyboard, keycode):
-    if keycode[1] == "w":
-      self.main_char_img.source = "images/Skater.png"
-      self.moving = False
-    elif keycode[1] == "s":
-      self.main_char_img.source = "images/Skater.png"
+    if keycode[1] == "d":
+      self.main_char_img.source = MainCharacter.STAND
       self.moving = False
