@@ -25,12 +25,10 @@ class DemonSlayer(ScreenManager):
   pass
 
 class DemonSlayerApp(App):
-  WIDTH = 1280
-  HEIGHT = 700
   def build(self):
     EventLoop.ensure_window()
     self.window = EventLoop.window
-    self.window.size = (DemonSlayerApp.WIDTH, DemonSlayerApp.HEIGHT)
+    self.window.size = (constants.WIDTH, constants.HEIGHT)
     return DemonSlayer(transition= FadeTransition())
 
 if __name__ == "__main__":

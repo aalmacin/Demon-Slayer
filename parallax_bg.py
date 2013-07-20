@@ -1,6 +1,5 @@
 from kivy.uix.widget import Widget
 from kivy.uix.image import Image
-from kivy.properties import NumericProperty
 from kivy.lang import Builder
 
 Builder.load_file("parallax_bg.kv")
