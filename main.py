@@ -1,3 +1,9 @@
+import kivy
+kivy.require("1.0.9")
+
+from kivy.config import Config
+Config.set('graphics','resizable',0)
+
 from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.atlas import Atlas
@@ -8,10 +14,8 @@ from parallax_bg import *
 from screens import *
 from kivy.uix.screenmanager import *
 from kivy.base import EventLoop
+import constants
 
-import kivy
-
-kivy.require("1.0.9")
 Factory.register("ParallaxBG", ParallaxBG)
 Factory.register("ParallaxIMG", ParallaxIMG)
 Factory.register("MainScreen", MainScreen)
