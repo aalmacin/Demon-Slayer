@@ -8,7 +8,7 @@ class MainCharacter(Widget):
   STAND = "images/KatipuneroStand.png"
   def __init__(self, **kwargs):
     super(MainCharacter, self).__init__(**kwargs)
-    self.standing_place = 100
+    self.standing_place = 70
 
     self.main_char_img = Image(source=MainCharacter.STAND)
     self.main_char_img.pos = (50, self.standing_place)
@@ -42,7 +42,7 @@ class MainCharacter(Widget):
 
   def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
     jump_height = 300
-    jump_duration = 0.3
+    jump_duration = 0.5
     if keycode[1] == "d":
       self.main_char_img.source = MainCharacter.RUNNING
       self.moving = True

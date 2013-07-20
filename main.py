@@ -17,7 +17,6 @@ from kivy.base import EventLoop
 import constants
 
 Factory.register("ParallaxBG", ParallaxBG)
-Factory.register("ParallaxIMG", ParallaxIMG)
 Factory.register("MainScreen", MainScreen)
 Factory.register("MainCharacter", MainCharacter)
 
