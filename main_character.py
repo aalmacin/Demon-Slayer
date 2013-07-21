@@ -3,12 +3,15 @@ from kivy.uix.image import Image
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.animation import Animation
+import constants
 class MainCharacter(Widget):
-  RUNNING = "images/KatipuneroRunning.zip"
+  RUNNING_LEFT = "images/KatipuneroRunningLeft.zip"
+  RUNNING_RIGHT = "images/KatipuneroRunningRight.zip"
   STAND = "images/KatipuneroStand.png"
   def __init__(self, **kwargs):
     super(MainCharacter, self).__init__(**kwargs)
     self.standing_place = 70
+    self.running_speed = 10
 
     self.main_char_img = Image(source=MainCharacter.STAND)
     self.main_char_img.pos = (50, self.standing_place)
@@ -17,6 +20,8 @@ class MainCharacter(Widget):
 
     self.moving = False
     self.jumping = False
+    self.on_battle = True
+    self.to_right = False
     Clock.schedule_interval(self.check_moving, 1/60)
 
     self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
@@ -34,7 +39,13 @@ class MainCharacter(Widget):
 
   def check_moving(self, dt):
     if self.moving:
-      self.parent.background.move_all()
+      if self.on_battle:
+        if self.to_right and self.main_char_img.x < (constants.WIDTH - self.main_char_img.width):
+          self.main_char_img.x += self.running_speed
+        if not self.to_right and self.main_char_img.x > 2:
+          self.main_char_img.x -= self.running_speed
+      else:
+        self.parent.background.move_all()
     if self.main_char_img.y == self.standing_place:
       self.jumping = False
     else:
@@ -44,13 +55,19 @@ class MainCharacter(Widget):
     jump_height = 300
     jump_duration = 0.5
     if keycode[1] == "d":
-      self.main_char_img.source = MainCharacter.RUNNING
+      self.main_char_img.source = MainCharacter.RUNNING_RIGHT
+      self.to_right = True
+      self.moving = True
+    elif keycode[1] == "a":
+      self.main_char_img.source = MainCharacter.RUNNING_LEFT
+      self.to_right = False
       self.moving = True
     elif keycode[1] == "w" and not self.jumping:
       anim = Animation(y=jump_height, duration=jump_duration) + Animation(y=self.standing_place, duration=jump_duration)
       anim.start(self.main_char_img)
 
+
   def _on_keyboard_up(self, keyboard, keycode):
-    if keycode[1] == "d":
+    if keycode[1] == "d" or keycode[1] == "a":
       self.main_char_img.source = MainCharacter.STAND
       self.moving = False
