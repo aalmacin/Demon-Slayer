@@ -8,6 +8,8 @@ class MainCharacter(Widget):
   RUNNING_LEFT = "images/KatipuneroRunningLeft.zip"
   RUNNING_RIGHT = "images/KatipuneroRunningRight.zip"
   STAND = "images/KatipuneroStand.png"
+  STAND_ATTACK_RIGHT = "images/KatipuneroStandAttackRight.png"
+  STAND_ATTACK_LEFT = "images/KatipuneroStandAttackLeft.png"
   def __init__(self, **kwargs):
     super(MainCharacter, self).__init__(**kwargs)
     self.standing_place = 70
@@ -15,12 +17,15 @@ class MainCharacter(Widget):
 
     self.main_char_img = Image(source=MainCharacter.STAND)
     self.main_char_img.pos = (50, self.standing_place)
-    self.main_char_img.size = (150, 300)
+    self.main_char_img.size = self.main_char_img.texture_size
     self.add_widget(self.main_char_img)
 
+    self.old_source = self.main_char_img.source
+
     self.moving = False
+    self.attacking = False
     self.jumping = False
-    self.on_battle = True
+    self.on_battle = False
     self.to_right = False
     Clock.schedule_interval(self.check_moving, 1/60)
 
@@ -34,7 +39,8 @@ class MainCharacter(Widget):
     self._keyboard = None
 
   def on_touch_down(self, touch):
-    print "touched"
+    self.old_source = self.main_char_img.source
+    self.attack()
     return super(MainCharacter, self).on_touch_down(touch)
 
   def check_moving(self, dt):
@@ -51,23 +57,40 @@ class MainCharacter(Widget):
     else:
       self.jumping = True
 
+  def attack(self):
+    if self.to_right:
+      self.main_char_img.source = MainCharacter.STAND_ATTACK_RIGHT
+    else:
+      self.main_char_img.source = MainCharacter.STAND_ATTACK_LEFT
+    self.main_char_img.size = self.main_char_img.texture_size
+
+    self.attacking = True
+    Clock.schedule_once(self.change_back, 0.2)
+
+  def change_back(self, dt):
+    self.attacking = False
+    self.main_char_img.source = self.old_source
+    self.main_char_img.size = self.main_char_img.texture_size
+
   def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
     jump_height = 300
     jump_duration = 0.5
     if keycode[1] == "d":
-      self.main_char_img.source = MainCharacter.RUNNING_RIGHT
+      if not self.attacking:
+        self.main_char_img.source = MainCharacter.RUNNING_RIGHT
       self.to_right = True
       self.moving = True
     elif keycode[1] == "a":
-      self.main_char_img.source = MainCharacter.RUNNING_LEFT
+      if not self.attacking:
+        self.main_char_img.source = MainCharacter.RUNNING_LEFT
       self.to_right = False
       self.moving = True
     elif keycode[1] == "w" and not self.jumping:
-      anim = Animation(y=jump_height, duration=jump_duration) + Animation(y=self.standing_place, duration=jump_duration)
-      anim.start(self.main_char_img)
-
+      if not self.attacking:
+        anim = Animation(y=jump_height, duration=jump_duration) + Animation(y=self.standing_place, duration=jump_duration)
+        anim.start(self.main_char_img)
 
   def _on_keyboard_up(self, keyboard, keycode):
-    if keycode[1] == "d" or keycode[1] == "a":
+    if keycode[1] == "d" or keycode[1] == "a" and not self.attacking:
       self.main_char_img.source = MainCharacter.STAND
       self.moving = False
