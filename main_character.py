@@ -20,8 +20,6 @@ class MainCharacter(Widget):
     self.main_char_img.size = self.main_char_img.texture_size
     self.add_widget(self.main_char_img)
 
-    self.old_source = self.main_char_img.source
-
     self.moving = False
     self.attacking = False
     self.jumping = False
@@ -39,8 +37,8 @@ class MainCharacter(Widget):
     self._keyboard = None
 
   def on_touch_down(self, touch):
-    self.old_source = self.main_char_img.source
-    self.attack()
+    if not self.attacking:
+      self.attack()
     return super(MainCharacter, self).on_touch_down(touch)
 
   def check_moving(self, dt):
@@ -69,7 +67,7 @@ class MainCharacter(Widget):
 
   def change_back(self, dt):
     self.attacking = False
-    self.main_char_img.source = self.old_source
+    self.main_char_img.source = MainCharacter.STAND
     self.main_char_img.size = self.main_char_img.texture_size
 
   def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
@@ -81,10 +79,11 @@ class MainCharacter(Widget):
       self.to_right = True
       self.moving = True
     elif keycode[1] == "a":
-      if not self.attacking:
-        self.main_char_img.source = MainCharacter.RUNNING_LEFT
-      self.to_right = False
-      self.moving = True
+      if self.on_battle:
+        if not self.attacking:
+          self.main_char_img.source = MainCharacter.RUNNING_LEFT
+        self.to_right = False
+        self.moving = True
     elif keycode[1] == "w" and not self.jumping:
       if not self.attacking:
         anim = Animation(y=jump_height, duration=jump_duration) + Animation(y=self.standing_place, duration=jump_duration)
