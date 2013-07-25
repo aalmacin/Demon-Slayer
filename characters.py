@@ -8,17 +8,45 @@ class CharacterManager(Widget):
   def __init__(self, **kwargs):
     super(CharacterManager, self).__init__(**kwargs)
     mc_sources = {
-      Character.STAND: constants.MC_STAND,
+      Character.STAND_RIGHT: constants.MC_STAND_RIGHT,
+      Character.STAND_LEFT: constants.MC_STAND_LEFT,
       Character.STAND_ATTACK_LEFT: constants.MC_STAND_ATTACK_LEFT,
       Character.STAND_ATTACK_RIGHT: constants.MC_STAND_ATTACK_RIGHT,
       Character.RUNNING_LEFT: constants.MC_RUNNING_LEFT,
       Character.RUNNING_RIGHT: constants.MC_RUNNING_RIGHT,
     }
     self.main_character = MainCharacter(mc_sources)
+
+    ge_sources = {
+      Character.STAND_RIGHT: constants.MC_STAND_RIGHT,
+      Character.STAND_LEFT: constants.MC_STAND_LEFT,
+      Character.STAND_ATTACK_LEFT: constants.MC_STAND_ATTACK_LEFT,
+      Character.STAND_ATTACK_RIGHT: constants.MC_STAND_ATTACK_RIGHT,
+      Character.RUNNING_LEFT: constants.MC_RUNNING_LEFT,
+      Character.RUNNING_RIGHT: constants.MC_RUNNING_RIGHT,
+    }
+    self.first_boss = GroundEnemy(ge_sources)
+
     self.add_widget(self.main_character)
+    self.add_widget(self.first_boss)
+
+    Clock.schedule_interval(self.check_collisions, 1/60)
+
+  def check_collisions(self, dt):
+    if self.main_character.collide_widget(self.first_boss):
+      print "COLLIDE"
+
+  def return_to_normal(self, dt):
+    self.first_boss.moving = False
+    self.first_boss.to_right = self.main_character.to_right
+    if self.first_boss.to_right:
+      self.first_boss.source = self.first_boss.sources[Character.STAND_RIGHT]
+    else:
+      self.first_boss.source = self.first_boss.sources[Character.STAND_LEFT]
 
 class Character(Image):
-  STAND = "stand"
+  STAND_LEFT = "stand left"
+  STAND_RIGHT = "stand right"
   STAND_ATTACK_LEFT = "stand attack left"
   STAND_ATTACK_RIGHT = "stand attack right"
   RUNNING_LEFT = "running left"
@@ -27,7 +55,8 @@ class Character(Image):
     super(Character, self).__init__(**kwargs)
     self.sources = sources
 
-    self.source = self.sources[Character.STAND]
+    self.source = self.sources[Character.STAND_RIGHT]
+    self.to_right = True
     self.size = self.texture_size
     self.y = constants.STANDING_Y
 
@@ -35,17 +64,25 @@ class Character(Image):
     self.moving = False
     self.attacking = False
     self.jumping = False
-    self.to_right = False
 
     Clock.schedule_interval(self.check_moving, 1/60)
     Clock.schedule_interval(self.check_jumping, 1/60)
 
   def check_moving(self, dt):
-    if self.moving:
-      if self.to_right and self.x < (constants.WIDTH - self.width):
-        self.x += constants.RUNNING_SPEED
-      if not self.to_right and self.x > constants.MIN_X:
-        self.x -= constants.RUNNING_SPEED
+    if not self.attacking:
+      if self.moving:
+        if self.to_right and self.x < (constants.WIDTH - self.width):
+          self.source = self.sources[Character.RUNNING_RIGHT]
+          self.move(constants.RUNNING_SPEED)
+          self.size = self.texture_size
+        if not self.to_right and self.x > constants.MIN_X:
+          self.source = self.sources[Character.RUNNING_LEFT]
+          self.move(-constants.RUNNING_SPEED)
+          self.size = self.texture_size
+
+  def move(self, move_by):
+    self.x += move_by
+
 
   def check_jumping(self, dt):
     if self.y == constants.STANDING_Y:
@@ -65,14 +102,28 @@ class Character(Image):
 
   def change_back(self, dt):
     self.attacking = False
-    self.source = self.sources[Character.STAND]
+    if self.to_right:
+      self.source = self.sources[Character.STAND_RIGHT]
+    else:
+      self.source = self.sources[Character.STAND_LEFT]
     self.size = self.texture_size
+
+  def jump(self):
+    if not self.jumping:
+      anim = Animation(
+        y=constants.JUMP_HEIGHT,
+        duration=constants.JUMP_DURATION
+      ) + Animation(
+        y=constants.STANDING_Y,
+        duration=constants.JUMP_DURATION
+      )
+      anim.start(self)
 
 class MainCharacter(Character):
   def __init__(self, sources, **kwargs):
     super(MainCharacter, self).__init__(sources, **kwargs)
     self.x = (constants.MC_X)
-    self.on_battle = False
+    self.on_battle = True
 
     self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
     self._keyboard.bind(on_key_down=self._on_keyboard_down)
@@ -97,28 +148,28 @@ class MainCharacter(Character):
 
   def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
     if keycode[1] == "d":
-      if not self.attacking:
-        self.source = self.sources[Character.RUNNING_RIGHT]
       self.to_right = True
       self.moving = True
     elif keycode[1] == "a":
       if self.on_battle:
-        if not self.attacking:
-          self.source = self.sources[Character.RUNNING_LEFT]
         self.to_right = False
         self.moving = True
-    elif keycode[1] == "w" and not self.jumping:
+    elif keycode[1] == "w":
       if not self.attacking:
-        anim = Animation(
-          y=constants.JUMP_HEIGHT,
-          duration=constants.JUMP_DURATION
-        ) + Animation(
-          y=constants.STANDING_Y,
-          duration=constants.JUMP_DURATION
-        )
-        anim.start(self)
+        self.jump()
 
   def _on_keyboard_up(self, keyboard, keycode):
-    if keycode[1] == "d" or keycode[1] == "a" and not self.attacking:
-      self.source = self.sources[Character.STAND]
-      self.moving = False
+    if not self.attacking:
+      if keycode[1] == "d":
+        self.source = self.sources[Character.STAND_RIGHT]
+        self.moving = False
+      elif keycode[1] == "a":
+        self.source = self.sources[Character.STAND_LEFT]
+        self.moving = False
+
+class GroundEnemy(Character):
+  def __init__(self, sources, **kwargs):
+    super(GroundEnemy, self).__init__(sources, **kwargs)
+    self.x = 700
+
+
