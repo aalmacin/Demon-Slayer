@@ -1,7 +1,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.button import Button
 from parallax_bg import ParallaxBG
-from main_character import MainCharacter
+from characters import *
 
 class MainScreen(Screen):
   def __init__(self, **kwargs):
