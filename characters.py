@@ -140,6 +140,7 @@ class MainCharacter(Character):
     self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
     self._keyboard.bind(on_key_down=self._on_keyboard_down)
     self._keyboard.bind(on_key_up=self._on_keyboard_up)
+    self.life_meter.set_max(constants.MC_LIFE_MAX)
 
   def _keyboard_closed(self):
     self._keyboard.unbind(on_key_down=self._on_keyboard_down)
@@ -184,6 +185,7 @@ class GroundEnemy(Character):
     super(GroundEnemy, self).__init__(sources, **kwargs)
     self.x = 700
     Clock.schedule_interval(self.check_life, 0.1)
+    self.life_meter.set_max(constants.LIFE_COUNT)
 
   def check_life(self, dt):
     if self.life_meter.life <= 0:
@@ -193,8 +195,10 @@ class LifeMeter(ProgressBar):
   def __init__(self, **kwargs):
     super(LifeMeter, self).__init__(**kwargs)
     self.life = constants.LIFE_COUNT
-    self.max = constants.LIFE_COUNT
-    self.value = self.max
+
+  def set_max(self, life_max):
+    self.max = life_max
+    self.value = life_max
 
   def decrease_life(self, dmg):
     self.life -= dmg
