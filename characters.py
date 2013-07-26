@@ -1,5 +1,6 @@
 from kivy.uix.widget import Widget
 from kivy.uix.image import Image
+from kivy.uix.progressbar import ProgressBar
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.animation import Animation
@@ -34,7 +35,10 @@ class CharacterManager(Widget):
 
   def check_collisions(self, dt):
     if self.main_character.collide_widget(self.first_boss):
-      print "COLLIDE"
+      if self.main_character.attacking:
+        self.first_boss.life_meter.decrease_life(constants.HIT_DMG)
+      if self.first_boss.attacking:
+        self.main_character.life_meter.decrease_life(constants.HIT_DMG)
 
   def return_to_normal(self, dt):
     self.first_boss.moving = False
@@ -55,6 +59,9 @@ class Character(Image):
     super(Character, self).__init__(**kwargs)
     self.sources = sources
 
+    self.life_meter = LifeMeter()
+    self.add_widget(self.life_meter)
+
     self.source = self.sources[Character.STAND_RIGHT]
     self.to_right = True
     self.size = self.texture_size
@@ -67,6 +74,7 @@ class Character(Image):
 
     Clock.schedule_interval(self.check_moving, 1/60)
     Clock.schedule_interval(self.check_jumping, 1/60)
+    Clock.schedule_interval(self.show_life, 1/60)
 
   def check_moving(self, dt):
     if not self.attacking:
@@ -82,6 +90,10 @@ class Character(Image):
 
   def move(self, move_by):
     self.x += move_by
+
+  def show_life(self, move_by):
+    self.life_meter.x = self.x
+    self.life_meter.y = self.y + self.height
 
 
   def check_jumping(self, dt):
@@ -171,5 +183,19 @@ class GroundEnemy(Character):
   def __init__(self, sources, **kwargs):
     super(GroundEnemy, self).__init__(sources, **kwargs)
     self.x = 700
+    Clock.schedule_interval(self.check_life, 0.1)
 
+  def check_life(self, dt):
+    if self.life_meter.life <= 0:
+      self.move(constants.CHARACTER_STORAGE)
 
+class LifeMeter(ProgressBar):
+  def __init__(self, **kwargs):
+    super(LifeMeter, self).__init__(**kwargs)
+    self.life = constants.LIFE_COUNT
+    self.max = constants.LIFE_COUNT
+    self.value = self.max
+
+  def decrease_life(self, dmg):
+    self.life -= dmg
+    self.value = self.life
