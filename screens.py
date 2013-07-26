@@ -1,16 +1,16 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.button import Button
 from parallax_bg import ParallaxBG
-from main_character import MainCharacter
+from characters import *
 
 class MainScreen(Screen):
   def __init__(self, **kwargs):
     super(MainScreen, self).__init__(**kwargs)
     self.background = ParallaxBG()
-    self.main_character = MainCharacter()
+    self.character_manager = CharacterManager()
 
     self.add_widget(self.background)
-    self.add_widget(self.main_character)
+    self.add_widget(self.character_manager)
 
 class StartScreen(Screen):
   def __init__(self, **kwargs):
