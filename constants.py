@@ -10,6 +10,7 @@ MC_STAND_RIGHT = "images/KatipuneroStandRight.png"
 MC_STAND_ATTACK_RIGHT = "images/KatipuneroStandAttackRight.png"
 MC_STAND_ATTACK_LEFT = "images/KatipuneroStandAttackLeft.png"
 MC_X = 50
+MC_LIFE_MAX = 200
 
 #Generic character values
 STANDING_Y = 70
