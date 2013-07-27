@@ -11,40 +11,36 @@ class CharacterManager(Widget):
   def __init__(self, **kwargs):
     super(CharacterManager, self).__init__(**kwargs)
     mc_sources = {
-      Character.STAND_RIGHT: constants.MC_STAND_RIGHT,
-      Character.STAND_LEFT: constants.MC_STAND_LEFT,
-      Character.STAND_ATTACK_LEFT: constants.MC_STAND_ATTACK_LEFT,
-      Character.STAND_ATTACK_RIGHT: constants.MC_STAND_ATTACK_RIGHT,
-      Character.RUNNING_LEFT: constants.MC_RUNNING_LEFT,
-      Character.RUNNING_RIGHT: constants.MC_RUNNING_RIGHT,
+      constants.STAND_RIGHT: constants.MC_STAND_RIGHT,
+      constants.STAND_LEFT: constants.MC_STAND_LEFT,
+      constants.STAND_ATTACK_LEFT: constants.MC_STAND_ATTACK_LEFT,
+      constants.STAND_ATTACK_RIGHT: constants.MC_STAND_ATTACK_RIGHT,
+      constants.RUNNING_LEFT: constants.MC_RUNNING_LEFT,
+      constants.RUNNING_RIGHT: constants.MC_RUNNING_RIGHT,
     }
     self.main_character = MainCharacter(mc_sources, constants.MC_LIFE_MAX)
 
     ge_sources = {
-      Character.STAND_RIGHT: constants.HM_STAND_RIGHT,
-      Character.STAND_LEFT: constants.HM_STAND_LEFT,
-      Character.STAND_ATTACK_LEFT: constants.HM_STAND_ATTACK_LEFT,
-      Character.STAND_ATTACK_RIGHT: constants.HM_STAND_ATTACK_RIGHT,
-      Character.RUNNING_LEFT: constants.HM_RUNNING_LEFT,
-      Character.RUNNING_RIGHT: constants.HM_RUNNING_RIGHT,
+      constants.STAND_RIGHT: constants.HM_STAND_RIGHT,
+      constants.STAND_LEFT: constants.HM_STAND_LEFT,
+      constants.STAND_ATTACK_LEFT: constants.HM_STAND_ATTACK_LEFT,
+      constants.STAND_ATTACK_RIGHT: constants.HM_STAND_ATTACK_RIGHT,
+      constants.RUNNING_LEFT: constants.HM_RUNNING_LEFT,
+      constants.RUNNING_RIGHT: constants.HM_RUNNING_RIGHT,
     }
     self.horse_man = GroundEnemy(ge_sources, self.main_character, constants.HM_LIFE_MAX)
+    #self.horse_man.x = constants.BOSS_POSITION
+    self.horse_man.life_meter.value = 0
 
     self.add_widget(self.main_character)
     self.add_widget(self.horse_man)
 
 class Character(Image):
-  STAND_LEFT = "stand left"
-  STAND_RIGHT = "stand right"
-  STAND_ATTACK_LEFT = "stand attack left"
-  STAND_ATTACK_RIGHT = "stand attack right"
-  RUNNING_LEFT = "running left"
-  RUNNING_RIGHT = "running right"
   def __init__(self, sources, max_life, **kwargs):
     super(Character, self).__init__(**kwargs)
     self.sources = sources
 
-    self.source = self.sources[Character.STAND_RIGHT]
+    self.source = self.sources[constants.STAND_RIGHT]
     self.to_right = True
     self.size = self.texture_size
     self.y = constants.STANDING_Y
@@ -57,7 +53,7 @@ class Character(Image):
     self.attacking = False
     self.jumping = False
 
-    Clock.schedule_interval(self.check_moving, 0)
+    Clock.schedule_interval(self.check_moving, 1/60)
     Clock.schedule_interval(self.check_jumping, 0)
     Clock.schedule_interval(self.show_life, 0)
 
@@ -65,11 +61,11 @@ class Character(Image):
     if not self.attacking:
       if self.moving:
         if self.to_right and self.x < (constants.WIDTH - self.width):
-          self.source = self.sources[Character.RUNNING_RIGHT]
+          self.source = self.sources[constants.RUNNING_RIGHT]
           self.move(constants.RUNNING_SPEED)
           self.size = self.texture_size
         if not self.to_right and self.x > constants.MIN_X:
-          self.source = self.sources[Character.RUNNING_LEFT]
+          self.source = self.sources[constants.RUNNING_LEFT]
           self.move(-constants.RUNNING_SPEED)
           self.size = self.texture_size
 
@@ -80,7 +76,6 @@ class Character(Image):
     self.life_meter.x = self.x
     self.life_meter.y = self.y + self.height
 
-
   def check_jumping(self, dt):
     if self.y == constants.STANDING_Y:
       self.jumping = False
@@ -89,9 +84,9 @@ class Character(Image):
 
   def attack(self):
     if self.to_right:
-      self.source = self.sources[Character.STAND_ATTACK_RIGHT]
+      self.source = self.sources[constants.STAND_ATTACK_RIGHT]
     else:
-      self.source = self.sources[Character.STAND_ATTACK_LEFT]
+      self.source = self.sources[constants.STAND_ATTACK_LEFT]
     self.size = self.texture_size
 
     self.attacking = True
@@ -100,9 +95,15 @@ class Character(Image):
   def change_back(self, dt):
     self.attacking = False
     if self.to_right:
-      self.source = self.sources[Character.STAND_RIGHT]
+      if self.moving:
+        self.source = self.sources[constants.RUNNING_RIGHT]
+      else:
+        self.source = self.sources[constants.STAND_RIGHT]
     else:
-      self.source = self.sources[Character.STAND_LEFT]
+      if self.moving:
+        self.source = self.sources[constants.RUNNING_LEFT]
+      else:
+        self.source = self.sources[constants.STAND_LEFT]
     self.size = self.texture_size
 
   def jump(self):
@@ -120,7 +121,7 @@ class MainCharacter(Character):
   def __init__(self, sources, max_life, **kwargs):
     super(MainCharacter, self).__init__(sources, max_life, **kwargs)
     self.x = (constants.MC_X)
-    self.on_battle = True
+    self.on_battle = False
 
     self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
     self._keyboard.bind(on_key_down=self._on_keyboard_down)
@@ -153,6 +154,8 @@ class MainCharacter(Character):
     if keycode[1] == "d":
       self.to_right = True
       self.moving = True
+      self.source = self.sources[constants.RUNNING_RIGHT]
+      self.size = self.texture_size
     elif keycode[1] == "a":
       if self.on_battle:
         self.to_right = False
@@ -164,16 +167,17 @@ class MainCharacter(Character):
   def _on_keyboard_up(self, keyboard, keycode):
     if not self.attacking:
       if keycode[1] == "d":
-        self.source = self.sources[Character.STAND_RIGHT]
+        self.source = self.sources[constants.STAND_RIGHT]
         self.moving = False
       elif keycode[1] == "a":
-        self.source = self.sources[Character.STAND_LEFT]
-        self.moving = False
+        if self.on_battle:
+          self.source = self.sources[constants.STAND_LEFT]
+          self.moving = False
 
 class GroundEnemy(Character):
   def __init__(self, sources, main_character, max_life, **kwargs):
     super(GroundEnemy, self).__init__(sources, max_life, **kwargs)
-    self.x = constants.BOSS_POSITION
+    self.x = constants.CHARACTER_STORAGE
     self.main_character = main_character
     Clock.schedule_interval(self.check_life, 0.1)
 
@@ -225,9 +229,9 @@ class GroundEnemy(Character):
     self.horse_man.moving = False
     self.horse_man.to_right = self.main_character.to_right
     if self.horse_man.to_right:
-      self.horse_man.source = self.horse_man.sources[Character.STAND_RIGHT]
+      self.horse_man.source = self.horse_man.sources[constants.STAND_RIGHT]
     else:
-      self.horse_man.source = self.horse_man.sources[Character.STAND_LEFT]
+      self.horse_man.source = self.horse_man.sources[constants.STAND_LEFT]
 
 class LifeMeter(ProgressBar):
   def __init__(self, **kwargs):

@@ -42,3 +42,10 @@ JUMP_DURATION = 0.5
 MIN_X = 2
 CHARACTER_STORAGE = 1800
 BOSS_POSITION = 700
+
+STAND_LEFT = "stand left"
+STAND_RIGHT = "stand right"
+STAND_ATTACK_LEFT = "stand attack left"
+STAND_ATTACK_RIGHT = "stand attack right"
+RUNNING_LEFT = "running left"
+RUNNING_RIGHT = "running right"
