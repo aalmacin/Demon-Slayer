@@ -12,6 +12,14 @@ MC_STAND_ATTACK_LEFT = "images/KatipuneroStandAttackLeft.png"
 MC_X = 50
 MC_LIFE_MAX = 200
 
+#Horseman/Tikbalang character values
+HM_RUNNING_LEFT = "images/TikbalangRunningLeft.zip"
+HM_RUNNING_RIGHT = "images/TikbalangRunningRight.zip"
+HM_STAND_LEFT = "images/TikbalangStandLeft.png"
+HM_STAND_RIGHT = "images/TikbalangStandRight.png"
+HM_STAND_ATTACK_RIGHT = "images/TikbalangStandAttackRight.png"
+HM_STAND_ATTACK_LEFT = "images/TikbalangStandAttackLeft.png"
+
 #Generic character values
 STANDING_Y = 70
 RUNNING_SPEED = 10
