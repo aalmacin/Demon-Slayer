@@ -189,8 +189,16 @@ class GroundEnemy(Character):
     if self.collide_widget(self.main_character):
       if self.main_character.attacking:
         self.life_meter.decrease_life(constants.HIT_DMG)
+        if self.to_right:
+          self.move(constants.HIT_MOVE)
+        else:
+          self.move(-constants.HIT_MOVE)
       if self.attacking:
         self.main_character.life_meter.decrease_life(constants.HIT_DMG)
+        if self.main_character.to_right:
+          self.move(constants.HIT_MOVE)
+        else:
+          self.move(-constants.HIT_MOVE)
 
 class LifeMeter(ProgressBar):
   def __init__(self, **kwargs):
