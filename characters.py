@@ -204,23 +204,27 @@ class GroundEnemy(Character):
       Clock.unschedule(self.decide_actions)
     self.milliseconds += 1
     if self.milliseconds % constants.SECONDS_CHECK == 0:
-      result =  random.randint(0, 3)
-      if result == constants.ACTION_MOVE_LEFT:
-        self.moving = True
-        self.to_right = False
-      elif result == constants.ACTION_MOVE_RIGHT:
-        self.moving = True
-        self.to_right = True
-      elif result == constants.ACTION_JUMP_LEFT:
-        self.jump()
-        self.moving = True
-        self.to_right = False
-      elif result == constants.ACTION_JUMP_RIGHT:
-        self.jump()
-        self.moving = True
-        self.to_right = True
+      if self.x >= (constants.WIDTH - self.width):
+        walk_left =  random.randint(0, 1)
+        if walk_left:
+          self.moving = True
+          self.to_right = False
+        else:
+          self.jump()
+          self.moving = True
+          self.to_right = False
+      elif self.x <= constants.MIN_X:
+        walk_right =  random.randint(0, 1)
+        if walk_right:
+          self.moving = True
+          self.to_right = True
+        else:
+          self.jump()
+          self.moving = True
+          self.to_right = True
       else:
-        print "NO ACTION"
+        self.moving = True
+        self.to_right = random.randint(0,1)
 
   def return_to_normal(self, dt):
     self.horse_man.moving = False
