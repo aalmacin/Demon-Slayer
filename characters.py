@@ -6,6 +6,7 @@ from kivy.clock import Clock
 from kivy.animation import Animation
 import constants
 import random
+from kivy.app import *
 class CharacterManager(Widget):
   def __init__(self, **kwargs):
     super(CharacterManager, self).__init__(**kwargs)
@@ -56,9 +57,9 @@ class Character(Image):
     self.attacking = False
     self.jumping = False
 
-    Clock.schedule_interval(self.check_moving, 1/60)
-    Clock.schedule_interval(self.check_jumping, 1/60)
-    Clock.schedule_interval(self.show_life, 1/60)
+    Clock.schedule_interval(self.check_moving, 0)
+    Clock.schedule_interval(self.check_jumping, 0)
+    Clock.schedule_interval(self.show_life, 0)
 
   def check_moving(self, dt):
     if not self.attacking:
@@ -125,6 +126,8 @@ class MainCharacter(Character):
     self._keyboard.bind(on_key_down=self._on_keyboard_down)
     self._keyboard.bind(on_key_up=self._on_keyboard_up)
 
+    Clock.schedule_interval(self.check_life, 0)
+
   def _keyboard_closed(self):
     self._keyboard.unbind(on_key_down=self._on_keyboard_down)
     self._keyboard.unbind(on_key_up=self._on_keyboard_up)
@@ -141,6 +144,10 @@ class MainCharacter(Character):
         super(MainCharacter, self).check_moving(dt)
       else:
         self.parent.parent.background.move_all()
+
+  def check_life(self, dt):
+    if self.life_meter.value <= 0:
+      App.get_running_app().root.current = constants.GAME_OVER_SCREEN
 
   def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
     if keycode[1] == "d":
@@ -166,12 +173,12 @@ class MainCharacter(Character):
 class GroundEnemy(Character):
   def __init__(self, sources, main_character, max_life, **kwargs):
     super(GroundEnemy, self).__init__(sources, max_life, **kwargs)
-    self.x = constants.CHARACTER_STORAGE
+    self.x = constants.BOSS_POSITION
     self.main_character = main_character
     Clock.schedule_interval(self.check_life, 0.1)
 
     self.milliseconds = 0
-    Clock.schedule_interval(self.check_collisions, 1/60)
+    Clock.schedule_interval(self.check_collisions, 0)
     Clock.schedule_interval(self.decide_actions, .1)
 
   def check_life(self, dt):
@@ -182,20 +189,8 @@ class GroundEnemy(Character):
     if self.collide_widget(self.main_character):
       if self.main_character.attacking:
         self.life_meter.decrease_life(constants.HIT_DMG)
-        if self.to_right:
-          self.moving = True
-          self.to_right = True
-        else:
-          self.moving = True
-          self.to_right = False
       if self.attacking:
         self.main_character.life_meter.decrease_life(constants.HIT_DMG)
-        if self.main_character.to_right:
-          self.main_character.moving = True
-          self.to_right = True
-        else:
-          self.main_character.moving = True
-          self.to_right = False
       else:
         self.attack()
 

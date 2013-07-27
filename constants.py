@@ -2,6 +2,14 @@
 WIDTH = 1280
 HEIGHT = 700
 
+#Screens
+MAIN_SCREEN = "main_screen"
+GAME_OVER_SCREEN = "game_over_screen"
+START_SCREEN = "game_screen"
+
+START_MSG = "Click anywhere to start game"
+GAME_OVER_MSG = "Click anywhere to play again"
+
 #Main character values
 MC_RUNNING_LEFT = "images/KatipuneroRunningLeft.zip"
 MC_RUNNING_RIGHT = "images/KatipuneroRunningRight.zip"
@@ -32,4 +40,5 @@ RUNNING_SPEED = 10
 JUMP_HEIGHT = 500
 JUMP_DURATION = 0.5
 MIN_X = 2
-CHARACTER_STORAGE = 800
+CHARACTER_STORAGE = 1800
+BOSS_POSITION = 700
