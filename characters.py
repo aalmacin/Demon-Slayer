@@ -174,7 +174,7 @@ class MainCharacter(Character):
 class GroundEnemy(Character):
   def __init__(self, sources, main_character, **kwargs):
     super(GroundEnemy, self).__init__(sources, **kwargs)
-    self.x = 700
+    self.x = constants.CHARACTER_STORAGE
     self.main_character = main_character
     Clock.schedule_interval(self.check_life, 0.1)
     self.life_meter.set_max(constants.LIFE_COUNT)
