@@ -19,34 +19,34 @@ class CharacterManager(Widget):
     self.main_character = MainCharacter(mc_sources)
 
     ge_sources = {
-      Character.STAND_RIGHT: constants.MC_STAND_RIGHT,
-      Character.STAND_LEFT: constants.MC_STAND_LEFT,
-      Character.STAND_ATTACK_LEFT: constants.MC_STAND_ATTACK_LEFT,
-      Character.STAND_ATTACK_RIGHT: constants.MC_STAND_ATTACK_RIGHT,
-      Character.RUNNING_LEFT: constants.MC_RUNNING_LEFT,
-      Character.RUNNING_RIGHT: constants.MC_RUNNING_RIGHT,
+      Character.STAND_RIGHT: constants.HM_STAND_RIGHT,
+      Character.STAND_LEFT: constants.HM_STAND_LEFT,
+      Character.STAND_ATTACK_LEFT: constants.HM_STAND_ATTACK_LEFT,
+      Character.STAND_ATTACK_RIGHT: constants.HM_STAND_ATTACK_RIGHT,
+      Character.RUNNING_LEFT: constants.HM_RUNNING_LEFT,
+      Character.RUNNING_RIGHT: constants.HM_RUNNING_RIGHT,
     }
-    self.first_boss = GroundEnemy(ge_sources)
+    self.horse_man = GroundEnemy(ge_sources)
 
     self.add_widget(self.main_character)
-    self.add_widget(self.first_boss)
+    self.add_widget(self.horse_man)
 
     Clock.schedule_interval(self.check_collisions, 1/60)
 
   def check_collisions(self, dt):
-    if self.main_character.collide_widget(self.first_boss):
+    if self.main_character.collide_widget(self.horse_man):
       if self.main_character.attacking:
-        self.first_boss.life_meter.decrease_life(constants.HIT_DMG)
-      if self.first_boss.attacking:
+        self.horse_man.life_meter.decrease_life(constants.HIT_DMG)
+      if self.horse_man.attacking:
         self.main_character.life_meter.decrease_life(constants.HIT_DMG)
 
   def return_to_normal(self, dt):
-    self.first_boss.moving = False
-    self.first_boss.to_right = self.main_character.to_right
-    if self.first_boss.to_right:
-      self.first_boss.source = self.first_boss.sources[Character.STAND_RIGHT]
+    self.horse_man.moving = False
+    self.horse_man.to_right = self.main_character.to_right
+    if self.horse_man.to_right:
+      self.horse_man.source = self.horse_man.sources[Character.STAND_RIGHT]
     else:
-      self.first_boss.source = self.first_boss.sources[Character.STAND_LEFT]
+      self.horse_man.source = self.horse_man.sources[Character.STAND_LEFT]
 
 class Character(Image):
   STAND_LEFT = "stand left"
