@@ -17,7 +17,7 @@ class CharacterManager(Widget):
       Character.RUNNING_LEFT: constants.MC_RUNNING_LEFT,
       Character.RUNNING_RIGHT: constants.MC_RUNNING_RIGHT,
     }
-    self.main_character = MainCharacter(mc_sources)
+    self.main_character = MainCharacter(mc_sources, constants.MC_LIFE_MAX)
 
     ge_sources = {
       Character.STAND_RIGHT: constants.HM_STAND_RIGHT,
@@ -27,7 +27,7 @@ class CharacterManager(Widget):
       Character.RUNNING_LEFT: constants.HM_RUNNING_LEFT,
       Character.RUNNING_RIGHT: constants.HM_RUNNING_RIGHT,
     }
-    self.horse_man = GroundEnemy(ge_sources, self.main_character)
+    self.horse_man = GroundEnemy(ge_sources, self.main_character, constants.HM_LIFE_MAX)
 
     self.add_widget(self.main_character)
     self.add_widget(self.horse_man)
@@ -39,7 +39,7 @@ class Character(Image):
   STAND_ATTACK_RIGHT = "stand attack right"
   RUNNING_LEFT = "running left"
   RUNNING_RIGHT = "running right"
-  def __init__(self, sources, **kwargs):
+  def __init__(self, sources, max_life, **kwargs):
     super(Character, self).__init__(**kwargs)
     self.sources = sources
 
@@ -47,6 +47,9 @@ class Character(Image):
     self.to_right = True
     self.size = self.texture_size
     self.y = constants.STANDING_Y
+
+    self.life_meter = LifeMeter(max=max_life)
+    self.add_widget(self.life_meter)
 
     # Game values
     self.moving = False
@@ -113,17 +116,14 @@ class Character(Image):
       anim.start(self)
 
 class MainCharacter(Character):
-  def __init__(self, sources, **kwargs):
-    super(MainCharacter, self).__init__(sources, **kwargs)
+  def __init__(self, sources, max_life, **kwargs):
+    super(MainCharacter, self).__init__(sources, max_life, **kwargs)
     self.x = (constants.MC_X)
     self.on_battle = True
 
     self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
     self._keyboard.bind(on_key_down=self._on_keyboard_down)
     self._keyboard.bind(on_key_up=self._on_keyboard_up)
-
-    self.life_meter = LifeMeter(constants.MC_LIFE_MAX)
-    self.add_widget(self.life_meter)
 
   def _keyboard_closed(self):
     self._keyboard.unbind(on_key_down=self._on_keyboard_down)
@@ -164,8 +164,8 @@ class MainCharacter(Character):
         self.moving = False
 
 class GroundEnemy(Character):
-  def __init__(self, sources, main_character, **kwargs):
-    super(GroundEnemy, self).__init__(sources, **kwargs)
+  def __init__(self, sources, main_character, max_life, **kwargs):
+    super(GroundEnemy, self).__init__(sources, max_life, **kwargs)
     self.x = constants.CHARACTER_STORAGE
     self.main_character = main_character
     Clock.schedule_interval(self.check_life, 0.1)
@@ -174,11 +174,8 @@ class GroundEnemy(Character):
     Clock.schedule_interval(self.check_collisions, 1/60)
     Clock.schedule_interval(self.decide_actions, .1)
 
-    self.life_meter = LifeMeter(constants.HM_LIFE_MAX)
-    self.add_widget(self.life_meter)
-
   def check_life(self, dt):
-    if self.life_meter.life <= 0:
+    if self.life_meter.value <= 0:
       self.move(constants.CHARACTER_STORAGE)
 
   def check_collisions(self, dt):
@@ -203,7 +200,7 @@ class GroundEnemy(Character):
         self.attack()
 
   def decide_actions(self, dt):
-    if self.life_meter.life <= 0:
+    if self.life_meter.value <= 0:
       Clock.unschedule(self.decide_actions)
     self.milliseconds += 1
     if self.milliseconds % constants.SECONDS_CHECK == 0:
@@ -234,13 +231,9 @@ class GroundEnemy(Character):
       self.horse_man.source = self.horse_man.sources[Character.STAND_LEFT]
 
 class LifeMeter(ProgressBar):
-  def __init__(self, max, **kwargs):
+  def __init__(self, **kwargs):
     super(LifeMeter, self).__init__(**kwargs)
-    self.life = max
-    self.max = max
     self.value = self.max
 
   def decrease_life(self, dmg):
-    print self.life
-    self.life -= dmg
-    self.value = self.life
+    self.value -= dmg
