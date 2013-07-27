@@ -34,6 +34,18 @@ SECONDS_CHECK = 10
 MOVE_ANIM = 30
 HIT_DMG = 0.5
 
+#Parallax values
+CLOUD_LEFT_BG = "images/Clouds_01.png"
+CLOUD_RIGHT_BG = "images/Clouds_02.png"
+BARRIO_LEFT_BG = "images/Barrio_01.png"
+BARRIO_RIGHT_BG = "images/Barrio_02.png"
+GROUND_LEFT_BG = "images/Ground_01.png"
+GROUND_RIGHT_BG = "images/Ground_02.png"
+NIGHT_BG = "images/Background.png"
+CLOUD_SPEED = 5
+BARRIO_SPEED = 10
+GROUND_SPEED = 20
+
 #Generic character values
 STANDING_Y = 70
 RUNNING_SPEED = 10

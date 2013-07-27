@@ -35,6 +35,10 @@ class CharacterManager(Widget):
     self.add_widget(self.main_character)
     self.add_widget(self.horse_man)
 
+  def reset(self):
+    self.horse_man.reset()
+    self.main_character.reset()
+
 class Character(Image):
   def __init__(self, sources, max_life, **kwargs):
     super(Character, self).__init__(**kwargs)
@@ -117,6 +121,18 @@ class Character(Image):
       )
       anim.start(self)
 
+  def reset(self):
+    self.source = self.sources[constants.STAND_RIGHT]
+    self.size = self.texture_size
+
+    self.to_right = True
+
+    self.moving = False
+    self.attacking = False
+    self.jumping = False
+
+    self.life_meter.reset()
+
 class MainCharacter(Character):
   def __init__(self, sources, max_life, **kwargs):
     super(MainCharacter, self).__init__(sources, max_life, **kwargs)
@@ -174,6 +190,11 @@ class MainCharacter(Character):
           self.source = self.sources[constants.STAND_LEFT]
           self.moving = False
 
+  def reset(self):
+    super(MainCharacter, self).reset()
+    self.x = constants.MC_X
+    self.on_battle = False
+
 class GroundEnemy(Character):
   def __init__(self, sources, main_character, max_life, **kwargs):
     super(GroundEnemy, self).__init__(sources, max_life, **kwargs)
@@ -184,6 +205,8 @@ class GroundEnemy(Character):
     self.milliseconds = 0
     Clock.schedule_interval(self.check_collisions, 0)
     Clock.schedule_interval(self.decide_actions, .1)
+
+    self.active = False
 
   def check_life(self, dt):
     if self.life_meter.value <= 0:
@@ -202,28 +225,29 @@ class GroundEnemy(Character):
     if self.life_meter.value <= 0:
       Clock.unschedule(self.decide_actions)
     self.milliseconds += 1
-    if self.milliseconds % constants.SECONDS_CHECK == 0:
-      if self.x >= (constants.WIDTH - self.width):
-        walk_left =  random.randint(0, 1)
-        if walk_left:
-          self.moving = True
-          self.to_right = False
+    if self.active:
+      if self.milliseconds % constants.SECONDS_CHECK == 0:
+        if self.x >= (constants.WIDTH - self.width):
+          walk_left =  random.randint(0, 1)
+          if walk_left:
+            self.moving = True
+            self.to_right = False
+          else:
+            self.jump()
+            self.moving = True
+            self.to_right = False
+        elif self.x <= constants.MIN_X:
+          walk_right =  random.randint(0, 1)
+          if walk_right:
+            self.moving = True
+            self.to_right = True
+          else:
+            self.jump()
+            self.moving = True
+            self.to_right = True
         else:
-          self.jump()
           self.moving = True
-          self.to_right = False
-      elif self.x <= constants.MIN_X:
-        walk_right =  random.randint(0, 1)
-        if walk_right:
-          self.moving = True
-          self.to_right = True
-        else:
-          self.jump()
-          self.moving = True
-          self.to_right = True
-      else:
-        self.moving = True
-        self.to_right = random.randint(0,1)
+          self.to_right = random.randint(0,1)
 
   def return_to_normal(self, dt):
     self.horse_man.moving = False
@@ -233,6 +257,11 @@ class GroundEnemy(Character):
     else:
       self.horse_man.source = self.horse_man.sources[constants.STAND_LEFT]
 
+  def reset(self):
+    super(GroundEnemy, self).reset()
+    self.x = constants.CHARACTER_STORAGE
+    self.active = False
+
 class LifeMeter(ProgressBar):
   def __init__(self, **kwargs):
     super(LifeMeter, self).__init__(**kwargs)
@@ -240,3 +269,6 @@ class LifeMeter(ProgressBar):
 
   def decrease_life(self, dmg):
     self.value -= dmg
+
+  def reset(self):
+    self.value = self.max

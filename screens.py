@@ -14,7 +14,8 @@ class MainScreen(Screen):
     self.add_widget(self.character_manager)
 
   def on_leave(self):
-    print "LEAVE"
+    self.character_manager.reset()
+    self.background.reset()
 
 class StartScreen(Screen):
   def __init__(self, **kwargs):
