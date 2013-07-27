@@ -26,19 +26,10 @@ class CharacterManager(Widget):
       Character.RUNNING_LEFT: constants.HM_RUNNING_LEFT,
       Character.RUNNING_RIGHT: constants.HM_RUNNING_RIGHT,
     }
-    self.horse_man = GroundEnemy(ge_sources)
+    self.horse_man = GroundEnemy(ge_sources, self.main_character)
 
     self.add_widget(self.main_character)
     self.add_widget(self.horse_man)
-
-    Clock.schedule_interval(self.check_collisions, 1/60)
-
-  def check_collisions(self, dt):
-    if self.main_character.collide_widget(self.horse_man):
-      if self.main_character.attacking:
-        self.horse_man.life_meter.decrease_life(constants.HIT_DMG)
-      if self.horse_man.attacking:
-        self.main_character.life_meter.decrease_life(constants.HIT_DMG)
 
   def return_to_normal(self, dt):
     self.horse_man.moving = False
@@ -181,15 +172,25 @@ class MainCharacter(Character):
         self.moving = False
 
 class GroundEnemy(Character):
-  def __init__(self, sources, **kwargs):
+  def __init__(self, sources, main_character, **kwargs):
     super(GroundEnemy, self).__init__(sources, **kwargs)
     self.x = 700
+    self.main_character = main_character
     Clock.schedule_interval(self.check_life, 0.1)
     self.life_meter.set_max(constants.LIFE_COUNT)
+
+    Clock.schedule_interval(self.check_collisions, 1/60)
 
   def check_life(self, dt):
     if self.life_meter.life <= 0:
       self.move(constants.CHARACTER_STORAGE)
+
+  def check_collisions(self, dt):
+    if self.collide_widget(self.main_character):
+      if self.main_character.attacking:
+        self.life_meter.decrease_life(constants.HIT_DMG)
+      if self.attacking:
+        self.main_character.life_meter.decrease_life(constants.HIT_DMG)
 
 class LifeMeter(ProgressBar):
   def __init__(self, **kwargs):
