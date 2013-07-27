@@ -5,6 +5,7 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.animation import Animation
 import constants
+import random
 class CharacterManager(Widget):
   def __init__(self, **kwargs):
     super(CharacterManager, self).__init__(**kwargs)
@@ -31,14 +32,6 @@ class CharacterManager(Widget):
     self.add_widget(self.main_character)
     self.add_widget(self.horse_man)
 
-  def return_to_normal(self, dt):
-    self.horse_man.moving = False
-    self.horse_man.to_right = self.main_character.to_right
-    if self.horse_man.to_right:
-      self.horse_man.source = self.horse_man.sources[Character.STAND_RIGHT]
-    else:
-      self.horse_man.source = self.horse_man.sources[Character.STAND_LEFT]
-
 class Character(Image):
   STAND_LEFT = "stand left"
   STAND_RIGHT = "stand right"
@@ -49,9 +42,6 @@ class Character(Image):
   def __init__(self, sources, **kwargs):
     super(Character, self).__init__(**kwargs)
     self.sources = sources
-
-    self.life_meter = LifeMeter()
-    self.add_widget(self.life_meter)
 
     self.source = self.sources[Character.STAND_RIGHT]
     self.to_right = True
@@ -131,7 +121,9 @@ class MainCharacter(Character):
     self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
     self._keyboard.bind(on_key_down=self._on_keyboard_down)
     self._keyboard.bind(on_key_up=self._on_keyboard_up)
-    self.life_meter.set_max(constants.MC_LIFE_MAX)
+
+    self.life_meter = LifeMeter(constants.MC_LIFE_MAX)
+    self.add_widget(self.life_meter)
 
   def _keyboard_closed(self):
     self._keyboard.unbind(on_key_down=self._on_keyboard_down)
@@ -177,9 +169,13 @@ class GroundEnemy(Character):
     self.x = constants.CHARACTER_STORAGE
     self.main_character = main_character
     Clock.schedule_interval(self.check_life, 0.1)
-    self.life_meter.set_max(constants.LIFE_COUNT)
 
+    self.milliseconds = 0
     Clock.schedule_interval(self.check_collisions, 1/60)
+    Clock.schedule_interval(self.decide_actions, .1)
+
+    self.life_meter = LifeMeter(constants.HM_LIFE_MAX)
+    self.add_widget(self.life_meter)
 
   def check_life(self, dt):
     if self.life_meter.life <= 0:
@@ -190,25 +186,61 @@ class GroundEnemy(Character):
       if self.main_character.attacking:
         self.life_meter.decrease_life(constants.HIT_DMG)
         if self.to_right:
-          self.move(constants.HIT_MOVE)
+          self.moving = True
+          self.to_right = True
         else:
-          self.move(-constants.HIT_MOVE)
+          self.moving = True
+          self.to_right = False
       if self.attacking:
         self.main_character.life_meter.decrease_life(constants.HIT_DMG)
         if self.main_character.to_right:
-          self.move(constants.HIT_MOVE)
+          self.main_character.moving = True
+          self.to_right = True
         else:
-          self.move(-constants.HIT_MOVE)
+          self.main_character.moving = True
+          self.to_right = False
+      else:
+        self.attack()
+
+  def decide_actions(self, dt):
+    if self.life_meter.life <= 0:
+      Clock.unschedule(self.decide_actions)
+    self.milliseconds += 1
+    if self.milliseconds % constants.SECONDS_CHECK == 0:
+      result =  random.randint(0, 3)
+      if result == constants.ACTION_MOVE_LEFT:
+        self.moving = True
+        self.to_right = False
+      elif result == constants.ACTION_MOVE_RIGHT:
+        self.moving = True
+        self.to_right = True
+      elif result == constants.ACTION_JUMP_LEFT:
+        self.jump()
+        self.moving = True
+        self.to_right = False
+      elif result == constants.ACTION_JUMP_RIGHT:
+        self.jump()
+        self.moving = True
+        self.to_right = True
+      else:
+        print "NO ACTION"
+
+  def return_to_normal(self, dt):
+    self.horse_man.moving = False
+    self.horse_man.to_right = self.main_character.to_right
+    if self.horse_man.to_right:
+      self.horse_man.source = self.horse_man.sources[Character.STAND_RIGHT]
+    else:
+      self.horse_man.source = self.horse_man.sources[Character.STAND_LEFT]
 
 class LifeMeter(ProgressBar):
-  def __init__(self, **kwargs):
+  def __init__(self, max, **kwargs):
     super(LifeMeter, self).__init__(**kwargs)
-    self.life = constants.LIFE_COUNT
-
-  def set_max(self, life_max):
-    self.max = life_max
-    self.value = life_max
+    self.life = max
+    self.max = max
+    self.value = self.max
 
   def decrease_life(self, dmg):
+    print self.life
     self.life -= dmg
     self.value = self.life
