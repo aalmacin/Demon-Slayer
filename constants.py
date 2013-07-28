@@ -55,9 +55,16 @@ MIN_X = 2
 CHARACTER_STORAGE = 1800
 BOSS_POSITION = 700
 
+#source keys
 STAND_LEFT = "stand left"
 STAND_RIGHT = "stand right"
 STAND_ATTACK_LEFT = "stand attack left"
 STAND_ATTACK_RIGHT = "stand attack right"
 RUNNING_LEFT = "running left"
 RUNNING_RIGHT = "running right"
+
+#Weak Character
+WC_LIFE_MAX = 1
+WC_DMG = 10
+WC_MOVEMENT_FAST = 20
+WC_MOVEMENT_SLOW = 10
