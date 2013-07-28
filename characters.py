@@ -32,11 +32,12 @@ class CharacterManager(Widget):
     #self.horse_man.x = constants.BOSS_POSITION
     self.horse_man.life_meter.value = 0
 
-    self.weak_enemy = WeakEnemy("images/Rock.png", self.main_character)
+    wc_sources = [constants.WC_ROCK, constants.WC_PLAYFULL_GIRL]
+    self.weak_enemies = WeakEnemy(wc_sources, self.main_character)
 
     self.add_widget(self.main_character)
     self.add_widget(self.horse_man)
-    self.add_widget(self.weak_enemy)
+    self.add_widget(self.weak_enemies)
 
   def reset(self):
     self.horse_man.reset()
@@ -266,8 +267,10 @@ class GroundEnemy(Character):
     self.active = False
 
 class WeakEnemy(Image):
-  def __init__(self, source, main_character, **kwargs):
-    super(WeakEnemy, self).__init__(x=constants.CHARACTER_STORAGE, y=constants.STANDING_Y, source=source)
+  def __init__(self, sources, main_character, **kwargs):
+    super(WeakEnemy, self).__init__(x=constants.CHARACTER_STORAGE, y=constants.STANDING_Y)
+    self.sources = sources
+    self.source = sources[0]
     self.main_character = main_character
     self.size = self.texture_size
     self.x = constants.CHARACTER_STORAGE
@@ -277,7 +280,7 @@ class WeakEnemy(Image):
 
   def attack_player(self, dt):
     if self.x <= -self.width:
-      self.x = constants.CHARACTER_STORAGE
+      self.reset()
     else:
       if self.main_character.moving:
         self.x -= constants.WC_MOVEMENT_FAST
@@ -288,7 +291,13 @@ class WeakEnemy(Image):
     if self.collide_widget(self.main_character):
       if not self.main_character.attacking:
         self.main_character.life_meter.decrease_life(constants.WC_DMG)
-      self.x = constants.CHARACTER_STORAGE
+      self.reset()
+
+  def reset(self):
+    res = random.randint(0, len(self.sources) - 1)
+    self.source = self.sources[res]
+    self.size = self.texture_size
+    self.x = constants.CHARACTER_STORAGE
 
 class LifeMeter(ProgressBar):
   def __init__(self, **kwargs):
