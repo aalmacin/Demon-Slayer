@@ -286,7 +286,8 @@ class WeakEnemy(Image):
 
   def check_collisions(self, dt):
     if self.collide_widget(self.main_character):
-      self.main_character.life_meter.decrease_life(constants.WC_DMG)
+      if not self.main_character.attacking:
+        self.main_character.life_meter.decrease_life(constants.WC_DMG)
       self.x = constants.CHARACTER_STORAGE
 
 class LifeMeter(ProgressBar):
