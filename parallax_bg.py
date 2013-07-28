@@ -1,5 +1,6 @@
 from kivy.uix.widget import Widget
 from kivy.uix.image import Image
+import constants
 
 class ParallaxBG(Widget):
   def __init__(self, **kwargs):
@@ -7,22 +8,18 @@ class ParallaxBG(Widget):
     self.set_images()
 
   def set_images(self):
-    self.bg = Image(source="images/Background.png")
+    self.bg = Image(source=constants.NIGHT_BG)
     self.bg.size = self.bg.texture_size
     self.add_widget(self.bg)
 
-    cloud_speed = 5
-    barrio_speed = 10
-    ground_speed = 20
+    self.cloud_1 = self.left_img(constants.CLOUD_SPEED, constants.CLOUD_LEFT_BG)
+    self.cloud_2 = self.right_img(constants.CLOUD_RIGHT_BG, self.cloud_1)
 
-    self.cloud_1 = self.left_img(cloud_speed, "images/Clouds_01.png")
-    self.cloud_2 = self.right_img("images/Clouds_02.png", self.cloud_1)
+    self.barrio_1 = self.left_img(constants.BARRIO_SPEED, constants.BARRIO_LEFT_BG, pos=(0, 140))
+    self.barrio_2 = self.right_img(constants.BARRIO_RIGHT_BG, self.barrio_1, y=140)
 
-    self.barrio_1 = self.left_img(barrio_speed, "images/Barrio_01.png", pos=(0, 140))
-    self.barrio_2 = self.right_img("images/Barrio_02.png", self.barrio_1, y=140)
-
-    self.ground_1 = self.left_img(ground_speed, "images/Ground_01.png")
-    self.ground_2 = self.right_img("images/Ground_02.png", self.ground_1)
+    self.ground_1 = self.left_img(constants.GROUND_SPEED, constants.GROUND_LEFT_BG)
+    self.ground_2 = self.right_img(constants.GROUND_RIGHT_BG, self.ground_1)
 
   def left_img(self, speed, img_source, pos=(0,0)):
     obj = ParallaxIMG(speed, source=img_source)
@@ -54,8 +51,20 @@ class ParallaxBG(Widget):
     else:
       obj2.x = obj1.x + obj1.width - obj1.speed
 
+  def reset(self):
+    self.cloud_1.reset()
+    self.cloud_2.reset()
+    self.barrio_1.reset()
+    self.barrio_2.reset()
+    self.ground_1.reset()
+    self.ground_2.reset()
+
 class ParallaxIMG(Image):
   def __init__(self, speed, **kwargs):
     super(ParallaxIMG, self).__init__(**kwargs)
+    self.initial_pos = self.pos
     self.speed = speed
     self.anchor = (0, 0)
+
+  def reset(self):
+    self.pos = self.initial_pos

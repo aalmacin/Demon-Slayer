@@ -2,6 +2,14 @@
 WIDTH = 1280
 HEIGHT = 700
 
+#Screens
+MAIN_SCREEN = "main_screen"
+GAME_OVER_SCREEN = "game_over_screen"
+START_SCREEN = "game_screen"
+
+START_MSG = "Click anywhere to start game"
+GAME_OVER_MSG = "Click anywhere to play again"
+
 #Main character values
 MC_RUNNING_LEFT = "images/KatipuneroRunningLeft.zip"
 MC_RUNNING_RIGHT = "images/KatipuneroRunningRight.zip"
@@ -19,13 +27,49 @@ HM_STAND_LEFT = "images/TikbalangStandLeft.png"
 HM_STAND_RIGHT = "images/TikbalangStandRight.png"
 HM_STAND_ATTACK_RIGHT = "images/TikbalangStandAttackRight.png"
 HM_STAND_ATTACK_LEFT = "images/TikbalangStandAttackLeft.png"
+HM_LIFE_MAX = 50
+
+#Generic enemy values
+SECONDS_CHECK = 10
+MOVE_ANIM = 30
+HIT_DMG = 0.5
+
+#Parallax values
+CLOUD_LEFT_BG = "images/Clouds_01.png"
+CLOUD_RIGHT_BG = "images/Clouds_02.png"
+BARRIO_LEFT_BG = "images/Barrio_01.png"
+BARRIO_RIGHT_BG = "images/Barrio_02.png"
+GROUND_LEFT_BG = "images/Ground_01.png"
+GROUND_RIGHT_BG = "images/Ground_02.png"
+NIGHT_BG = "images/Background.png"
+CLOUD_SPEED = 5
+BARRIO_SPEED = 10
+GROUND_SPEED = 20
 
 #Generic character values
 STANDING_Y = 70
 RUNNING_SPEED = 10
-JUMP_HEIGHT = 500
+JUMP_HEIGHT = 400
 JUMP_DURATION = 0.5
 MIN_X = 2
-HIT_DMG = 2
-LIFE_COUNT = 80
-CHARACTER_STORAGE = 800
+CHARACTER_STORAGE = 1800
+BOSS_POSITION = 700
+
+#source keys
+STAND_LEFT = "stand left"
+STAND_RIGHT = "stand right"
+STAND_ATTACK_LEFT = "stand attack left"
+STAND_ATTACK_RIGHT = "stand attack right"
+RUNNING_LEFT = "running left"
+RUNNING_RIGHT = "running right"
+
+#Weak Character
+WC_LIFE_MAX = 1
+WC_MOVEMENT_FAST = 20
+WC_MOVEMENT_SLOW = 10
+WC_ROCK = "images/Rock.png"
+WC_ROCK_DMG = 10
+WC_PLAYFULL_GIRL = "images/PlayfullGirlRunning.zip"
+WC_PLAYFULL_GIRL_DMG = 15
+WC_FROGMAN = "images/TiyanakRunning.zip"
+WC_FROGMAN_DMG = 20
