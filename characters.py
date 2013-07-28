@@ -277,6 +277,7 @@ class WeakEnemy(Image):
     self.main_character = main_character
     self.size = self.texture_size
     self.x = constants.CHARACTER_STORAGE
+    self.enemy_count = 0
 
     Clock.schedule_interval(self.check_collisions, 0.1)
     Clock.schedule_interval(self.attack_player, 0)
@@ -284,6 +285,7 @@ class WeakEnemy(Image):
   def attack_player(self, dt):
     if self.x <= -self.width:
       self.reset()
+      self.add_enemy_count()
     else:
       if self.main_character.moving:
         self.x -= constants.WC_MOVEMENT_FAST
@@ -292,10 +294,14 @@ class WeakEnemy(Image):
 
   def check_collisions(self, dt):
     if self.collide_widget(self.main_character):
+      self.add_enemy_count()
       if not self.main_character.attacking:
         self.main_character.life_meter.decrease_life(self.dmg)
       self.x -= constants.WC_MOVEMENT_SLOW
       self.reset()
+
+  def add_enemy_count(self):
+    self.enemy_count += 1
 
   def reset(self):
     res = random.randint(0, len(self.sources) - 1)
