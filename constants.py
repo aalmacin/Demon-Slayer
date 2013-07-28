@@ -65,9 +65,11 @@ RUNNING_RIGHT = "running right"
 
 #Weak Character
 WC_LIFE_MAX = 1
-WC_DMG = 10
 WC_MOVEMENT_FAST = 20
 WC_MOVEMENT_SLOW = 10
 WC_ROCK = "images/Rock.png"
+WC_ROCK_DMG = 10
 WC_PLAYFULL_GIRL = "images/PlayfullGirlRunning.zip"
+WC_PLAYFULL_GIRL_DMG = 15
 WC_FROGMAN = "images/TiyanakRunning.zip"
+WC_FROGMAN_DMG = 20

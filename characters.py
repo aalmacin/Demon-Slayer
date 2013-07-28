@@ -33,7 +33,8 @@ class CharacterManager(Widget):
     self.horse_man.life_meter.value = 0
 
     wc_sources = [constants.WC_ROCK, constants.WC_PLAYFULL_GIRL, constants.WC_FROGMAN]
-    self.weak_enemies = WeakEnemy(wc_sources, self.main_character)
+    wc_dmgs = [constants.WC_ROCK_DMG, constants.WC_PLAYFULL_GIRL_DMG, constants.WC_FROGMAN_DMG]
+    self.weak_enemies = WeakEnemy(wc_sources, wc_dmgs, self.main_character)
 
     self.add_widget(self.main_character)
     self.add_widget(self.horse_man)
@@ -267,10 +268,12 @@ class GroundEnemy(Character):
     self.active = False
 
 class WeakEnemy(Image):
-  def __init__(self, sources, main_character, **kwargs):
+  def __init__(self, sources, dmgs, main_character, **kwargs):
     super(WeakEnemy, self).__init__(x=constants.CHARACTER_STORAGE, y=constants.STANDING_Y)
     self.sources = sources
     self.source = sources[0]
+    self.dmgs = dmgs
+    self.dmg = dmgs[0]
     self.main_character = main_character
     self.size = self.texture_size
     self.x = constants.CHARACTER_STORAGE
@@ -290,12 +293,14 @@ class WeakEnemy(Image):
   def check_collisions(self, dt):
     if self.collide_widget(self.main_character):
       if not self.main_character.attacking:
-        self.main_character.life_meter.decrease_life(constants.WC_DMG)
+        self.main_character.life_meter.decrease_life(self.dmg)
+      self.x -= constants.WC_MOVEMENT_SLOW
       self.reset()
 
   def reset(self):
     res = random.randint(0, len(self.sources) - 1)
     self.source = self.sources[res]
+    self.dmg = self.dmgs[res]
     self.size = self.texture_size
     self.x = constants.CHARACTER_STORAGE
 
