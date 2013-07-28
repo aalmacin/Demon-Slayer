@@ -32,7 +32,7 @@ class CharacterManager(Widget):
     #self.horse_man.x = constants.BOSS_POSITION
     self.horse_man.life_meter.value = 0
 
-    wc_sources = [constants.WC_ROCK, constants.WC_PLAYFULL_GIRL]
+    wc_sources = [constants.WC_ROCK, constants.WC_PLAYFULL_GIRL, constants.WC_FROGMAN]
     self.weak_enemies = WeakEnemy(wc_sources, self.main_character)
 
     self.add_widget(self.main_character)
