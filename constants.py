@@ -51,7 +51,7 @@ GROUND_RIGHT_BG = "images/Ground_02.png"
 NIGHT_BG = "images/Background.png"
 CLOUD_SPEED = 5
 BARRIO_SPEED = 10
-GROUND_SPEED = 20
+GROUND_SPEED = 15
 
 #Generic character values
 STANDING_Y = 70
@@ -72,11 +72,12 @@ RUNNING_RIGHT = "running right"
 
 #Weak Character
 WC_LIFE_MAX = 1
-WC_MOVEMENT_FAST = 20
-WC_MOVEMENT_SLOW = 10
 WC_ROCK = "images/Rock.png"
 WC_ROCK_DMG = 10
+WC_ROCK_SPEED = 15
 WC_PLAYFULL_GIRL = "images/PlayfullGirlRunning.zip"
 WC_PLAYFULL_GIRL_DMG = 15
+WC_PLAYFULL_GIRL_SPEED = 20
 WC_FROGMAN = "images/TiyanakRunning.zip"
 WC_FROGMAN_DMG = 20
+WC_FROGMAN_SPEED = 20

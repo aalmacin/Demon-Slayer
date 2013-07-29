@@ -34,7 +34,8 @@ class CharacterManager(Widget):
 
     wc_sources = [constants.WC_ROCK, constants.WC_PLAYFULL_GIRL, constants.WC_FROGMAN]
     wc_dmgs = [constants.WC_ROCK_DMG, constants.WC_PLAYFULL_GIRL_DMG, constants.WC_FROGMAN_DMG]
-    self.weak_enemies = WeakEnemy(wc_sources, wc_dmgs, self.main_character)
+    wc_speeds = [constants.WC_ROCK_SPEED, constants.WC_PLAYFULL_GIRL_SPEED, constants.WC_FROGMAN_SPEED]
+    self.weak_enemies = WeakEnemy(wc_sources, wc_dmgs, wc_speeds, self.main_character)
 
     self.add_widget(self.main_character)
     self.add_widget(self.horse_man)
@@ -268,12 +269,14 @@ class GroundEnemy(Character):
     self.active = False
 
 class WeakEnemy(Image):
-  def __init__(self, sources, dmgs, main_character, **kwargs):
+  def __init__(self, sources, dmgs, speeds, main_character, **kwargs):
     super(WeakEnemy, self).__init__(x=constants.CHARACTER_STORAGE, y=constants.STANDING_Y)
     self.sources = sources
     self.source = sources[0]
     self.dmgs = dmgs
     self.dmg = dmgs[0]
+    self.speeds = speeds
+    self.speed = speeds[0]
     self.main_character = main_character
     self.size = self.texture_size
     self.x = constants.CHARACTER_STORAGE
@@ -287,18 +290,18 @@ class WeakEnemy(Image):
       self.reset()
       self.add_enemy_count()
     else:
-      if self.main_character.moving:
-        self.x -= constants.WC_MOVEMENT_FAST
-      else:
-        self.x -= constants.WC_MOVEMENT_SLOW
+      self.move_enemy()
 
   def check_collisions(self, dt):
     if self.collide_widget(self.main_character):
       self.add_enemy_count()
       if not self.main_character.attacking:
         self.main_character.life_meter.decrease_life(self.dmg)
-      self.x -= constants.WC_MOVEMENT_SLOW
+      self.move_enemy()
       self.reset()
+
+  def move_enemy(self):
+    self.x -= self.speed
 
   def add_enemy_count(self):
     self.enemy_count += 1
@@ -307,6 +310,7 @@ class WeakEnemy(Image):
     res = random.randint(0, len(self.sources) - 1)
     self.source = self.sources[res]
     self.dmg = self.dmgs[res]
+    self.speed = self.speeds[res]
     self.size = self.texture_size
     self.x = constants.CHARACTER_STORAGE
 
