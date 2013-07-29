@@ -1,15 +1,25 @@
 #Main Game values
 WIDTH = 1280
 HEIGHT = 700
-
 #Screens
 MAIN_SCREEN = "main_screen"
+INSTRUCTION_SCREEN = "instruction_screen"
 GAME_OVER_SCREEN = "game_over_screen"
-START_SCREEN = "game_screen"
-
-START_MSG = "Click anywhere to start game"
+START_SCREEN = "start_screen"
+#messages
+START_MSG = "Start Game"
+HOW_TO_MSG = "How To Play"
+GO_BACK_MSG = "Go Back"
+QUIT_GAME_MSG = "Quit"
 GAME_OVER_MSG = "Click anywhere to play again"
-
+#button size
+LARGE_BTN_SIZE = (0.5, 0.3)
+STANDARD_BTN_SIZE = (0.4, 0.2)
+SMALL_BTN_SIZE = (0.2, 0.1)
+#font size
+LARGE_FNT_SIZE = '120px'
+STANDARD_FNT_SIZE = '18px'
+SMALL_FNT_SIZE = '14px'
 #Main character values
 MC_RUNNING_LEFT = "images/KatipuneroRunningLeft.zip"
 MC_RUNNING_RIGHT = "images/KatipuneroRunningRight.zip"
@@ -19,7 +29,6 @@ MC_STAND_ATTACK_RIGHT = "images/KatipuneroStandAttackRight.png"
 MC_STAND_ATTACK_LEFT = "images/KatipuneroStandAttackLeft.png"
 MC_X = 50
 MC_LIFE_MAX = 200
-
 #Horseman/Tikbalang character values
 HM_RUNNING_LEFT = "images/TikbalangRunningLeft.zip"
 HM_RUNNING_RIGHT = "images/TikbalangRunningRight.zip"
@@ -28,12 +37,10 @@ HM_STAND_RIGHT = "images/TikbalangStandRight.png"
 HM_STAND_ATTACK_RIGHT = "images/TikbalangStandAttackRight.png"
 HM_STAND_ATTACK_LEFT = "images/TikbalangStandAttackLeft.png"
 HM_LIFE_MAX = 50
-
 #Generic enemy values
 SECONDS_CHECK = 10
 MOVE_ANIM = 30
 HIT_DMG = 0.5
-
 #Parallax values
 CLOUD_LEFT_BG = "images/Clouds_01.png"
 CLOUD_RIGHT_BG = "images/Clouds_02.png"
