@@ -29,6 +29,8 @@ MC_STAND_ATTACK_RIGHT = "images/KatipuneroStandAttackRight.png"
 MC_STAND_ATTACK_LEFT = "images/KatipuneroStandAttackLeft.png"
 MC_X = 50
 MC_LIFE_MAX = 200
+MC_TAUNT_SOUNDS = ["sounds/Katipunero_taunt_1.wav","sounds/Katipunero_taunt_2.wav","sounds/Katipunero_taunt_3.wav"]
+MC_DIE_SOUNDS = ["sounds/Katipunero_die_1.wav","sounds/Katipunero_die_2.wav" ]
 #Horseman/Tikbalang character values
 HM_RUNNING_LEFT = "images/TikbalangRunningLeft.zip"
 HM_RUNNING_RIGHT = "images/TikbalangRunningRight.zip"
@@ -36,6 +38,8 @@ HM_STAND_LEFT = "images/TikbalangStandLeft.png"
 HM_STAND_RIGHT = "images/TikbalangStandRight.png"
 HM_STAND_ATTACK_RIGHT = "images/TikbalangStandAttackRight.png"
 HM_STAND_ATTACK_LEFT = "images/TikbalangStandAttackLeft.png"
+HM_TAUNT_SOUNDS = ["sounds/Tikbalang_taunt_1.wav","sounds/Tikbalang_taunt_2.wav"]
+HM_DIE_SOUNDS = ["sounds/Tikbalang_die_1.wav","sounds/Tikbalang_die_2.wav","sounds/Tikbalang_die_3.wav"]
 HM_LIFE_MAX = 50
 #Generic enemy values
 SECONDS_CHECK = 10
@@ -77,6 +81,15 @@ WC_MOVEMENT_SLOW = 10
 WC_ROCK = "images/Rock.png"
 WC_ROCK_DMG = 10
 WC_PLAYFULL_GIRL = "images/PlayfullGirlRunning.zip"
+WC_PLAYFULL_GIRL_YELL_SOUNDS = ["sounds/playful_girl_yell_1.wav","sounds/playful_girl_yell_2.wav"]
+WC_PLAYFULL_GIRL_DIE_SOUND = "sounds/playful_girl_die_1.wav"
 WC_PLAYFULL_GIRL_DMG = 15
 WC_FROGMAN = "images/TiyanakRunning.zip"
+WC_FROGMAN_YELL_SOUNDS = ["sounds/Tiyanak_yell_1.wav","sounds/Tiyanak_yell_2.wav"]
+WC_FROGMAN_DIE_SOUND = "sounds/Tiyanak_die_1.wav"
 WC_FROGMAN_DMG = 20
+
+#game sounds
+AMBIENT_NIGHT_LOOP = "sounds/ambient_night_1.wav"
+THEME_INTRO_SOUND = "sounds/theme_song_intro.wav"
+THEME_LOOP = "sounds/theme_song_loop.wav"
