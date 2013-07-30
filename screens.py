@@ -15,6 +15,10 @@ class MainScreen(Screen):
     self.add_widget(self.background)
     self.add_widget(self.character_manager)
 
+  def on_enter(self):
+    self.character_manager.on_enter()
+    #self.background.on_enter()
+
   def on_leave(self):
     self.character_manager.reset()
     self.background.reset()
@@ -23,8 +27,8 @@ class StartScreen(Screen):
   def __init__(self, **kwargs):
     super(StartScreen, self).__init__(**kwargs)
     #self.background = ParallaxBG()
-    
-    #temp background, would like to use same paralax as in main loop, have it run in main, 
+
+    #temp background, would like to use same paralax as in main loop, have it run in main,
     #over top of all other loops(game, menu, game over etc)
     self.bg = Image(source=constants.NIGHT_BG)
     self.bg.size = self.bg.texture_size
@@ -36,7 +40,7 @@ class StartScreen(Screen):
     self.game_title = Label(text = "Demon Slayer", font_size = constants.LARGE_FNT_SIZE)
     self.add_widget(self.game_title)
     self.game_title.pos = (-125,-25)
-    #start button   
+    #start button
     self.starter = Button(text=constants.START_MSG, font_size=14)
     self.add_widget(self.starter)
     self.starter.bind(on_press= self.start_btn_pressed)
@@ -57,21 +61,21 @@ class StartScreen(Screen):
     self.quit.size_hint = constants.SMALL_BTN_SIZE
     self.quit.font_size = constants.SMALL_FNT_SIZE
     self.quit.pos = (1000,100)
-    
+
   def start_btn_pressed(self, instance):
     self.parent.current = constants.MAIN_SCREEN
-    
+
   def how_to_play_btn_pressed(self, instance):
     self.parent.current = constants.INSTRUCTION_SCREEN
-    
+
   def quit_btn_pressed(self, instance):
     App.get_running_app().stop()
-    
+
 class InstructionScreen(Screen):
   def __init__(self, **kwargs):
     super(InstructionScreen, self).__init__(**kwargs)
     self.instructions = Label(text = "Kill the monsters coming at you by clicking the mouse when they are near.\n"+
-                                      "jump over the rocks or they will hurt you.", font_size = constants.STANDARD_FNT_SIZE) 
+                                      "jump over the rocks or they will hurt you.", font_size = constants.STANDARD_FNT_SIZE)
     self.instructions.pos = (1000,100)
     #go back button
     self.go_back = Button(text=constants.GO_BACK_MSG)
@@ -80,7 +84,7 @@ class InstructionScreen(Screen):
     self.go_back.size_hint = constants.SMALL_BTN_SIZE
     self.go_back.font_size = constants.STANDARD_FNT_SIZE
     self.go_back.pos = (1000,180)
-   
+
 def go_back_btn_pressed(self, instance):
     self.parent.current = constants.START_SCREEN
 
