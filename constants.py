@@ -33,7 +33,7 @@ MC_TAUNT_SOUND_1 = "sounds/Katipunero_taunt_1.wav"
 MC_TAUNT_SOUND_2 = "sounds/Katipunero_taunt_2.wav"
 MC_TAUNT_SOUND_3 = "sounds/Katipunero_taunt_3.wav"
 MC_DIE_SOUND_1 = "sounds/Katipunero_die_1.wav"
-MC_DIE_SOUND_2 = "sounds/Katipunero_die_2.wav" 
+MC_DIE_SOUND_2 = "sounds/Katipunero_die_2.wav"
 #Horseman/Tikbalang character values
 HM_RUNNING_LEFT = "images/TikbalangRunningLeft.zip"
 HM_RUNNING_RIGHT = "images/TikbalangRunningRight.zip"
@@ -61,7 +61,7 @@ GROUND_RIGHT_BG = "images/Ground_02.png"
 NIGHT_BG = "images/Background.png"
 CLOUD_SPEED = 5
 BARRIO_SPEED = 10
-GROUND_SPEED = 20
+GROUND_SPEED = 15
 
 #Generic character values
 STANDING_Y = 70
@@ -82,21 +82,21 @@ RUNNING_RIGHT = "running right"
 
 #Weak Character
 WC_LIFE_MAX = 1
-WC_MOVEMENT_FAST = 20
-WC_MOVEMENT_SLOW = 10
 WC_ROCK = "images/Rock.png"
 WC_ROCK_DMG = 10
+WC_ROCK_SPEED = 15
 WC_PLAYFULL_GIRL = "images/PlayfullGirlRunning.zip"
 WC_PLAYFULL_GIRL_YELL_SOUND_1 = "sounds/playful_girl_yell_1.wav"
 WC_PLAYFULL_GIRL_YELL_SOUND_2 = "sounds/playful_girl_yell_2.wav"
 WC_PLAYFULL_GIRL_DIE_SOUND = "sounds/playful_girl_die_1.wav"
 WC_PLAYFULL_GIRL_DMG = 15
+WC_PLAYFULL_GIRL_SPEED = 20
 WC_FROGMAN = "images/TiyanakRunning.zip"
 WC_FROGMAN_YELL_SOUND_1 = "sounds/Tiyanak_yell_1.wav"
 WC_FROGMAN_YELL_SOUND_2 = "sounds/Tiyanak_yell_2.wav"
 WC_FROGMAN_DIE_SOUND = "sounds/Tiyanak_die_1.wav"
 WC_FROGMAN_DMG = 20
-
+WC_FROGMAN_SPEED = 23
 #game sounds
 AMBIENT_NIGHT_LOOP = "sounds/ambient_night_1.wav"
 THEME_INTRO_SOUND = "sounds/theme_song_intro.wav"
