@@ -74,9 +74,21 @@ class StartScreen(Screen):
 class InstructionScreen(Screen):
   def __init__(self, **kwargs):
     super(InstructionScreen, self).__init__(**kwargs)
-    self.instructions = Label(text = "Kill the monsters coming at you by clicking the mouse when they are near.\n"+
-                                      "jump over the rocks or they will hurt you.", font_size = constants.STANDARD_FNT_SIZE)
-    self.instructions.pos = (1000,100)
+    self.bg = Image(source=constants.NIGHT_BG)
+    self.bg.size = self.bg.texture_size
+    self.add_widget(self.bg)
+    self.cloud_1 = Image(source = constants.CLOUD_LEFT_BG)
+    self.cloud_1.size = self.bg.texture_size
+    self.add_widget(self.cloud_1)
+    self.instructions = Label(text = "D - move right.\n"+
+                                     "A - move left.\n"+
+                                     "W - Jump.\n"+
+                                     "Left Click to swing sword.\n"+
+                                     "Kill the enemies with your sword when they get in range.\n"+
+                                     "If they hit you you will take damage.\n"+
+                                      "jump over the rocks or you will take damage.""\n"+"\n"+ "Good Luck!", font_size = constants.STANDARD_FNT_SIZE)
+    self.add_widget(self.instructions)
+    self.instructions.pos = (-315,-155)
     #go back button
     self.go_back = Button(text=constants.GO_BACK_MSG)
     self.add_widget(self.go_back)
@@ -85,7 +97,7 @@ class InstructionScreen(Screen):
     self.go_back.font_size = constants.STANDARD_FNT_SIZE
     self.go_back.pos = (1000,180)
 
-def go_back_btn_pressed(self, instance):
+  def go_back_btn_pressed(self, instance):
     self.parent.current = constants.START_SCREEN
 
 class GameOverScreen(Screen):
