@@ -81,7 +81,7 @@ class InstructionScreen(Screen):
     self.go_back.font_size = constants.STANDARD_FNT_SIZE
     self.go_back.pos = (1000,180)
    
-def go_back_btn_pressed(self, instance):
+  def go_back_btn_pressed(self, instance):
     self.parent.current = constants.START_SCREEN
 
 class GameOverScreen(Screen):
