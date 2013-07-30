@@ -11,6 +11,8 @@ from kivy.app import *
 class CharacterManager(Widget):
   def __init__(self, **kwargs):
     super(CharacterManager, self).__init__(**kwargs)
+    self.enemy_count = 0
+
     mc_sources = {
       constants.STAND_RIGHT: constants.MC_STAND_RIGHT,
       constants.STAND_LEFT: constants.MC_STAND_LEFT,
@@ -33,24 +35,42 @@ class CharacterManager(Widget):
     self.horse_man.x = constants.BOSS_POSITION
     self.horse_man.life_meter.value = 0
 
-    wc_sources = [constants.WC_ROCK, constants.WC_PLAYFULL_GIRL, constants.WC_FROGMAN]
-    wc_dmgs = [constants.WC_ROCK_DMG, constants.WC_PLAYFULL_GIRL_DMG, constants.WC_FROGMAN_DMG]
-    wc_speeds = [constants.WC_ROCK_SPEED, constants.WC_PLAYFULL_GIRL_SPEED, constants.WC_FROGMAN_SPEED]
-    self.weak_enemies = WeakEnemy(wc_sources, wc_dmgs, wc_speeds, self.main_character)
+    self.rock_obstacle = WeakEnemy(constants.WC_ROCK, constants.WC_ROCK_DMG, constants.WC_ROCK_SPEED, self.main_character)
+    self.playfull_girl = WeakEnemy(constants.WC_PLAYFULL_GIRL, constants.WC_PLAYFULL_GIRL_DMG, constants.WC_PLAYFULL_GIRL_SPEED, self.main_character)
+    self.frogman = WeakEnemy(constants.WC_FROGMAN, constants.WC_FROGMAN_DMG, constants.WC_FROGMAN_SPEED, self.main_character)
+
+    self.weak_enemies = []
+    self.weak_enemies.append(self.rock_obstacle)
+    self.weak_enemies.append(self.playfull_girl)
+    self.weak_enemies.append(self.frogman)
 
     self.add_widget(self.main_character)
     self.add_widget(self.horse_man)
-    self.add_widget(self.weak_enemies)
+    self.add_widget(self.rock_obstacle)
+    self.add_widget(self.playfull_girl)
+    self.add_widget(self.frogman)
 
   def reset(self):
     self.horse_man.reset()
     self.main_character.reset()
-    self.weak_enemies.on_leave()
+    for weak_enemy in self.weak_enemies:
+      weak_enemy.on_leave()
+    Clock.unschedule(self.attack_player)
 
   def on_enter(self):
     self.horse_man.on_enter()
     self.main_character.on_enter()
-    self.weak_enemies.on_enter()
+    for weak_enemy in self.weak_enemies:
+      weak_enemy.on_enter()
+    Clock.schedule_interval(self.attack_player, 0)
+
+  def attack_player(self, dt):
+    for enemy in self.weak_enemies:
+      if enemy.attacking:
+        return
+    selected_enemy = random.choice(self.weak_enemies)
+    selected_enemy.attacking = True
+    self.enemy_count += 1
 
 class Character(Image):
   def __init__(self, sources, max_life, **kwargs):
@@ -296,29 +316,24 @@ class GroundEnemy(Character):
     self.active = False
 
 class WeakEnemy(Image):
-  def __init__(self, sources, dmgs, speeds, main_character, **kwargs):
-    super(WeakEnemy, self).__init__(x=constants.CHARACTER_STORAGE, y=constants.STANDING_Y)
-    self.sources = sources
-    self.source = sources[0]
-    self.dmgs = dmgs
-    self.dmg = dmgs[0]
-    self.speeds = speeds
-    self.speed = speeds[0]
+  def __init__(self, source, dmg, speed, main_character, **kwargs):
+    super(WeakEnemy, self).__init__(source=constants.WC_ROCK, x=constants.CHARACTER_STORAGE, y=constants.STANDING_Y)
+    self.the_source = source
+    self.dmg = dmg
+    self.speed = speed
     self.main_character = main_character
+    self.attacking = False
     self.size = self.texture_size
-    self.x = constants.CHARACTER_STORAGE
-    self.enemy_count = 0
 
   def attack_player(self, dt):
-    if self.x <= -self.width:
-      self.reset()
-      self.add_enemy_count()
-    else:
-      self.move_enemy()
+    if self.attacking:
+      if self.x <= -self.width:
+        self.reset()
+      else:
+        self.move_enemy()
 
   def check_collisions(self, dt):
     if self.collide_widget(self.main_character):
-      self.add_enemy_count()
       if not self.main_character.attacking:
         self.main_character.life_meter.decrease_life(self.dmg)
         self.main_character.die_sounds[random.randint(0,1)].play()
@@ -330,28 +345,19 @@ class WeakEnemy(Image):
   def move_enemy(self):
     self.x -= self.speed
 
-  def add_enemy_count(self):
-    self.enemy_count += 1
-
   def on_enter(self):
+    self.source = self.the_source
+    self.size = self.texture_size
     Clock.schedule_interval(self.check_collisions, 0.1)
     Clock.schedule_interval(self.attack_player, 0)
 
   def on_leave(self):
-    self.x = constants.CHARACTER_STORAGE
-    self.source = self.sources[0]
-    self.dmg = self.dmgs[0]
-    self.speed = self.speeds[0]
+    self.reset()
     Clock.unschedule(self.check_collisions)
-    Clock.unschedule(self.attack_player)
 
   def reset(self):
-    res = random.randint(0, len(self.sources) - 1)
-    self.source = self.sources[res]
-    self.dmg = self.dmgs[res]
-    self.speed = self.speeds[res]
-    self.size = self.texture_size
     self.x = constants.CHARACTER_STORAGE
+    self.attacking = False
 
 class LifeMeter(ProgressBar):
   def __init__(self, **kwargs):
