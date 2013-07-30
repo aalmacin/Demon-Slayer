@@ -35,9 +35,34 @@ class CharacterManager(Widget):
     self.horse_man.x = constants.BOSS_POSITION
     self.horse_man.life_meter.value = 0
 
-    self.rock_obstacle = WeakEnemy(constants.WC_ROCK, constants.WC_ROCK_DMG, constants.WC_ROCK_SPEED, self.main_character)
-    self.playfull_girl = WeakEnemy(constants.WC_PLAYFULL_GIRL, constants.WC_PLAYFULL_GIRL_DMG, constants.WC_PLAYFULL_GIRL_SPEED, self.main_character)
-    self.frogman = WeakEnemy(constants.WC_FROGMAN, constants.WC_FROGMAN_DMG, constants.WC_FROGMAN_SPEED, self.main_character)
+    self.rock_obstacle = WeakEnemy(
+      constants.WC_ROCK,
+      constants.WC_ROCK_DMG,
+      constants.WC_ROCK_SPEED,
+      self.main_character
+    )
+    self.playfull_girl = SoundedWeakEnemy(
+      constants.WC_PLAYFULL_GIRL,
+      constants.WC_PLAYFULL_GIRL_DMG,
+      constants.WC_PLAYFULL_GIRL_SPEED,
+      self.main_character,
+      [
+        SoundLoader.load(constants.WC_PLAYFULL_GIRL_YELL_SOUND_1),
+        SoundLoader.load(constants.WC_PLAYFULL_GIRL_YELL_SOUND_2)
+      ],
+      SoundLoader.load(constants.WC_PLAYFULL_GIRL_DIE_SOUND)
+    )
+    self.frogman = SoundedWeakEnemy(
+      constants.WC_FROGMAN,
+      constants.WC_FROGMAN_DMG,
+      constants.WC_FROGMAN_SPEED,
+      self.main_character,
+      [
+        SoundLoader.load(constants.WC_FROGMAN_YELL_SOUND_1),
+        SoundLoader.load(constants.WC_FROGMAN_YELL_SOUND_2)
+      ],
+      SoundLoader.load(constants.WC_FROGMAN_DIE_SOUND)
+    )
 
     self.weak_enemies = []
     self.weak_enemies.append(self.rock_obstacle)
@@ -358,6 +383,29 @@ class WeakEnemy(Image):
   def reset(self):
     self.x = constants.CHARACTER_STORAGE
     self.attacking = False
+
+class SoundedWeakEnemy(WeakEnemy):
+  def __init__(self, source, dmg, speed, main_character, normal_sounds, die_sound, **kwargs):
+    super(SoundedWeakEnemy, self).__init__(source, dmg, speed, main_character)
+    self.normal_sounds = normal_sounds
+    self.die_sound = die_sound
+
+  def make_sound(self, dt):
+    if self.attacking:
+      random.choice(self.normal_sounds).play()
+
+  def check_collisions(self, dt):
+    if self.collide_widget(self.main_character) and self.main_character.attacking:
+      self.die_sound.play()
+    super(SoundedWeakEnemy, self).check_collisions(dt)
+
+  def on_leave(self):
+    super(SoundedWeakEnemy, self).on_leave()
+    Clock.unschedule(self.make_sound)
+
+  def on_enter(self):
+    super(SoundedWeakEnemy, self).on_enter()
+    Clock.schedule_interval(self.make_sound, 1)
 
 class LifeMeter(ProgressBar):
   def __init__(self, **kwargs):
