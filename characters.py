@@ -109,16 +109,19 @@ class Character(Image):
 
   def change_back(self, dt):
     self.attacking = False
-    if self.to_right:
-      if self.moving:
-        self.source = self.sources[constants.RUNNING_RIGHT]
+    if self.on_battle:
+      if self.to_right:
+        if self.moving:
+          self.source = self.sources[constants.RUNNING_RIGHT]
+        else:
+          self.source = self.sources[constants.STAND_RIGHT]
       else:
-        self.source = self.sources[constants.STAND_RIGHT]
+        if self.moving:
+          self.source = self.sources[constants.RUNNING_LEFT]
+        else:
+          self.source = self.sources[constants.STAND_LEFT]
     else:
-      if self.moving:
-        self.source = self.sources[constants.RUNNING_LEFT]
-      else:
-        self.source = self.sources[constants.STAND_LEFT]
+      self.source = self.sources[constants.RUNNING_RIGHT]
     self.size = self.texture_size
 
   def jump(self):
