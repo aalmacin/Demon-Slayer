@@ -29,7 +29,7 @@ class CharacterManager(Widget):
       constants.RUNNING_RIGHT: constants.HM_RUNNING_RIGHT,
     }
     self.horse_man = GroundEnemy(ge_sources, self.main_character, constants.HM_LIFE_MAX)
-    #self.horse_man.x = constants.BOSS_POSITION
+    self.horse_man.x = constants.BOSS_POSITION
     self.horse_man.life_meter.value = 0
 
     wc_sources = [constants.WC_ROCK, constants.WC_PLAYFULL_GIRL, constants.WC_FROGMAN]
@@ -44,6 +44,12 @@ class CharacterManager(Widget):
   def reset(self):
     self.horse_man.reset()
     self.main_character.reset()
+    self.weak_enemies.on_leave()
+
+  def on_enter(self):
+    self.horse_man.on_enter()
+    self.main_character.on_enter()
+    self.weak_enemies.on_enter()
 
 class Character(Image):
   def __init__(self, sources, max_life, **kwargs):
@@ -63,8 +69,6 @@ class Character(Image):
     self.attacking = False
     self.jumping = False
 
-    Clock.schedule_interval(self.check_moving, 1/60)
-    Clock.schedule_interval(self.check_jumping, 0)
     Clock.schedule_interval(self.show_life, 0)
 
   def check_moving(self, dt):
@@ -139,6 +143,13 @@ class Character(Image):
 
     self.life_meter.reset()
 
+    Clock.unschedule(self.check_moving)
+    Clock.unschedule(self.check_jumping)
+
+  def on_enter(self):
+    Clock.schedule_interval(self.check_moving, 1/60)
+    Clock.schedule_interval(self.check_jumping, 0)
+
 class MainCharacter(Character):
   def __init__(self, sources, max_life, **kwargs):
     super(MainCharacter, self).__init__(sources, max_life, **kwargs)
@@ -148,8 +159,6 @@ class MainCharacter(Character):
     self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
     self._keyboard.bind(on_key_down=self._on_keyboard_down)
     self._keyboard.bind(on_key_up=self._on_keyboard_up)
-
-    Clock.schedule_interval(self.check_life, 0)
 
   def _keyboard_closed(self):
     self._keyboard.unbind(on_key_down=self._on_keyboard_down)
@@ -162,11 +171,10 @@ class MainCharacter(Character):
     return super(Character, self).on_touch_down(touch)
 
   def check_moving(self, dt):
-    if self.moving:
-      if self.on_battle:
-        super(MainCharacter, self).check_moving(dt)
-      else:
-        self.parent.parent.background.move_all()
+    if self.moving and self.on_battle:
+      super(MainCharacter, self).check_moving(dt)
+    if not self.on_battle:
+      self.parent.parent.background.move_all()
 
   def check_life(self, dt):
     if self.life_meter.value <= 0:
@@ -187,7 +195,7 @@ class MainCharacter(Character):
         self.jump()
 
   def _on_keyboard_up(self, keyboard, keycode):
-    if not self.attacking:
+    if not self.attacking and self.on_battle:
       if keycode[1] == "d":
         self.source = self.sources[constants.STAND_RIGHT]
         self.moving = False
@@ -196,10 +204,20 @@ class MainCharacter(Character):
           self.source = self.sources[constants.STAND_LEFT]
           self.moving = False
 
+  def on_enter(self):
+    super(MainCharacter, self).on_enter()
+    Clock.schedule_interval(self.check_life, 0)
+    self.source = self.sources[constants.RUNNING_RIGHT]
+    self.size = self.texture_size
+
   def reset(self):
     super(MainCharacter, self).reset()
     self.x = constants.MC_X
     self.on_battle = False
+    Clock.unschedule(self.check_life)
+    self.source = self.sources[constants.STAND_RIGHT]
+    self.size = self.texture_size
+
 
 class GroundEnemy(Character):
   def __init__(self, sources, main_character, max_life, **kwargs):
@@ -282,9 +300,6 @@ class WeakEnemy(Image):
     self.x = constants.CHARACTER_STORAGE
     self.enemy_count = 0
 
-    Clock.schedule_interval(self.check_collisions, 0.1)
-    Clock.schedule_interval(self.attack_player, 0)
-
   def attack_player(self, dt):
     if self.x <= -self.width:
       self.reset()
@@ -306,6 +321,18 @@ class WeakEnemy(Image):
   def add_enemy_count(self):
     self.enemy_count += 1
 
+  def on_enter(self):
+    Clock.schedule_interval(self.check_collisions, 0.1)
+    Clock.schedule_interval(self.attack_player, 0)
+
+  def on_leave(self):
+    self.x = constants.CHARACTER_STORAGE
+    self.source = self.sources[0]
+    self.dmg = self.dmgs[0]
+    self.speed = self.speeds[0]
+    Clock.unschedule(self.check_collisions)
+    Clock.unschedule(self.attack_player)
+
   def reset(self):
     res = random.randint(0, len(self.sources) - 1)
     self.source = self.sources[res]
@@ -318,7 +345,7 @@ class LifeMeter(ProgressBar):
   def __init__(self, **kwargs):
     super(LifeMeter, self).__init__(**kwargs)
     self.value = self.max
-    self.width = self.max * 2
+    self.width = self.max * 1.5
 
   def decrease_life(self, dmg):
     self.value -= dmg
