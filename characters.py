@@ -4,6 +4,7 @@ from kivy.uix.progressbar import ProgressBar
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.animation import Animation
+from kivy.core.audio import SoundLoader
 import constants
 import random
 from kivy.app import *
@@ -143,10 +144,13 @@ class MainCharacter(Character):
     super(MainCharacter, self).__init__(sources, max_life, **kwargs)
     self.x = (constants.MC_X)
     self.on_battle = False
-
+    
     self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
     self._keyboard.bind(on_key_down=self._on_keyboard_down)
     self._keyboard.bind(on_key_up=self._on_keyboard_up)
+    
+    self.taunt_sounds = [SoundLoader.load(constants.MC_TAUNT_SOUND_1),SoundLoader.load(constants.MC_TAUNT_SOUND_2),SoundLoader.load(constants.MC_TAUNT_SOUND_3)]
+    self.die_sounds = [SoundLoader.load(constants.MC_DIE_SOUND_1),SoundLoader.load(constants.MC_DIE_SOUND_2)]
 
     Clock.schedule_interval(self.check_life, 0)
 
@@ -206,7 +210,7 @@ class GroundEnemy(Character):
     self.x = constants.CHARACTER_STORAGE
     self.main_character = main_character
     Clock.schedule_interval(self.check_life, 0.1)
-
+    
     self.milliseconds = 0
     Clock.schedule_interval(self.check_collisions, 0)
     Clock.schedule_interval(self.decide_actions, .1)
@@ -221,8 +225,10 @@ class GroundEnemy(Character):
     if self.collide_widget(self.main_character):
       if self.main_character.attacking:
         self.life_meter.decrease_life(constants.HIT_DMG)
+        self.main_character.taunt_sounds[random.randint(0,2)].play()
       if self.attacking:
         self.main_character.life_meter.decrease_life(constants.HIT_DMG)
+        self.main_character.die_sounds[random.randint(0,1)].play()
       else:
         self.attack()
 
@@ -297,6 +303,9 @@ class WeakEnemy(Image):
       self.add_enemy_count()
       if not self.main_character.attacking:
         self.main_character.life_meter.decrease_life(self.dmg)
+        self.main_character.die_sounds[random.randint(0,1)].play()
+      else:
+        self.main_character.taunt_sounds[random.randint(0,2)].play()
       self.x -= constants.WC_MOVEMENT_SLOW
       self.reset()
 
