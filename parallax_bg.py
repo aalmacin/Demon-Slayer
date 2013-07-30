@@ -15,23 +15,23 @@ class ParallaxBG(Widget):
     self.cloud_1 = self.left_img(constants.CLOUD_SPEED, constants.CLOUD_LEFT_BG)
     self.cloud_2 = self.right_img(constants.CLOUD_RIGHT_BG, self.cloud_1)
 
-    self.barrio_1 = self.left_img(constants.BARRIO_SPEED, constants.BARRIO_LEFT_BG, pos=(0, 140))
-    self.barrio_2 = self.right_img(constants.BARRIO_RIGHT_BG, self.barrio_1, y=140)
+    self.barrio_1 = self.left_img(constants.BARRIO_SPEED, constants.BARRIO_LEFT_BG)
+    self.barrio_2 = self.right_img(constants.BARRIO_RIGHT_BG, self.barrio_1)
 
     self.ground_1 = self.left_img(constants.GROUND_SPEED, constants.GROUND_LEFT_BG)
     self.ground_2 = self.right_img(constants.GROUND_RIGHT_BG, self.ground_1)
 
-  def left_img(self, speed, img_source, pos=(0,0)):
-    obj = ParallaxIMG(speed, source=img_source)
+  def left_img(self, speed, img_source):
+    initial_pos = (0,0)
+    obj = ParallaxIMG(speed, initial_pos, pos=initial_pos, source=img_source)
     obj.size = obj.texture_size
-    obj.pos = pos
     self.add_widget(obj)
     return obj
 
-  def right_img(self, img_source, left_img, y=0):
-    obj = ParallaxIMG(left_img.speed, source=img_source)
+  def right_img(self, img_source, left_img):
+    initial_pos = (left_img.x + left_img.width, left_img.y)
+    obj = ParallaxIMG(left_img.speed, initial_pos, pos=initial_pos, source=img_source)
     obj.size = obj.texture_size
-    obj.pos = (left_img.x + left_img.width, y)
     self.add_widget(obj)
     return obj
 
@@ -60,11 +60,10 @@ class ParallaxBG(Widget):
     self.ground_2.reset()
 
 class ParallaxIMG(Image):
-  def __init__(self, speed, **kwargs):
+  def __init__(self, speed, initial_pos, **kwargs):
     super(ParallaxIMG, self).__init__(**kwargs)
-    self.initial_pos = self.pos
+    self.initial_pos = initial_pos
     self.speed = speed
-    self.anchor = (0, 0)
 
   def reset(self):
     self.pos = self.initial_pos
