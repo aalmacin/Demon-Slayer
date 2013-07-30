@@ -379,6 +379,7 @@ class WeakEnemy(Image):
   def on_leave(self):
     self.reset()
     Clock.unschedule(self.check_collisions)
+    Clock.unschedule(self.attack_player)
 
   def reset(self):
     self.x = constants.CHARACTER_STORAGE
