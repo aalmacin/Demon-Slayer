@@ -32,8 +32,7 @@ class CharacterManager(Widget):
       constants.RUNNING_RIGHT: constants.HM_RUNNING_RIGHT,
     }
     self.horse_man = GroundEnemy(ge_sources, self.main_character, constants.HM_LIFE_MAX)
-    self.horse_man.x = constants.BOSS_POSITION
-    self.horse_man.life_meter.value = 0
+    self.horse_man.x = constants.CHARACTER_STORAGE
 
     self.rock_obstacle = WeakEnemy(
       constants.WC_ROCK,
@@ -80,7 +79,19 @@ class CharacterManager(Widget):
     self.main_character.reset()
     for weak_enemy in self.weak_enemies:
       weak_enemy.on_leave()
+    self.enemy_count = 0
     Clock.unschedule(self.attack_player)
+    Clock.unschedule(self.check_boss_fight)
+
+  def check_boss_fight(self, dt):
+    if self.enemy_count > constants.ENEMY_MAX:
+      self.main_character.on_battle = True
+      self.horse_man.animate_entrance()
+      self.main_character.source = self.main_character.sources[constants.STAND_RIGHT]
+      self.horse_man.source = self.horse_man.sources[constants.RUNNING_LEFT]
+      self.horse_man.size = self.horse_man.texture_size
+      self.horse_man.active = True
+      Clock.unschedule(self.check_boss_fight)
 
   def on_enter(self):
     self.horse_man.on_enter()
@@ -88,6 +99,7 @@ class CharacterManager(Widget):
     for weak_enemy in self.weak_enemies:
       weak_enemy.on_enter()
     Clock.schedule_interval(self.attack_player, 0)
+    Clock.schedule_interval(self.check_boss_fight, 0)
 
   def attack_player(self, dt):
     for enemy in self.weak_enemies:
@@ -154,19 +166,16 @@ class Character(Image):
 
   def change_back(self, dt):
     self.attacking = False
-    if self.on_battle:
-      if self.to_right:
-        if self.moving:
-          self.source = self.sources[constants.RUNNING_RIGHT]
-        else:
-          self.source = self.sources[constants.STAND_RIGHT]
+    if self.to_right:
+      if self.moving:
+        self.source = self.sources[constants.RUNNING_RIGHT]
       else:
-        if self.moving:
-          self.source = self.sources[constants.RUNNING_LEFT]
-        else:
-          self.source = self.sources[constants.STAND_LEFT]
+        self.source = self.sources[constants.STAND_RIGHT]
     else:
-      self.source = self.sources[constants.RUNNING_RIGHT]
+      if self.moving:
+        self.source = self.sources[constants.RUNNING_LEFT]
+      else:
+        self.source = self.sources[constants.STAND_LEFT]
     self.size = self.texture_size
 
   def jump(self):
@@ -222,6 +231,14 @@ class MainCharacter(Character):
       self.attack()
     return super(Character, self).on_touch_down(touch)
 
+  def change_back(self, dt):
+    if self.on_battle:
+      super(MainCharacter, self).change_back(dt)
+    else:
+      self.attacking = False
+      self.source = self.sources[constants.RUNNING_RIGHT]
+      self.size = self.texture_size
+
   def check_moving(self, dt):
     if self.moving and self.on_battle:
       super(MainCharacter, self).check_moving(dt)
@@ -270,7 +287,6 @@ class MainCharacter(Character):
     self.source = self.sources[constants.STAND_RIGHT]
     self.size = self.texture_size
 
-
 class GroundEnemy(Character):
   def __init__(self, sources, main_character, max_life, **kwargs):
     super(GroundEnemy, self).__init__(sources, max_life, **kwargs)
@@ -298,6 +314,14 @@ class GroundEnemy(Character):
         self.main_character.die_sounds[random.randint(0,1)].play()
       else:
         self.attack()
+
+  def animate_entrance(self):
+    def change_back(dt):
+      self.source = self.sources[constants.STAND_LEFT]
+      self.size = self.texture_size
+    anim = Animation(x=constants.BOSS_POSITION, duration=1)
+    anim.start(self)
+    Clock.schedule_once(change_back, 1)
 
   def decide_actions(self, dt):
     if self.life_meter.value <= 0:
@@ -351,7 +375,7 @@ class WeakEnemy(Image):
     self.size = self.texture_size
 
   def attack_player(self, dt):
-    if self.attacking:
+    if self.attacking and not self.main_character.on_battle:
       if self.x <= -self.width:
         self.reset()
       else:
@@ -392,7 +416,7 @@ class SoundedWeakEnemy(WeakEnemy):
     self.die_sound = die_sound
 
   def make_sound(self, dt):
-    if self.attacking:
+    if self.attacking and not self.main_character.on_battle:
       random.choice(self.normal_sounds).play()
 
   def check_collisions(self, dt):
