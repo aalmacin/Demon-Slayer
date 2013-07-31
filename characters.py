@@ -20,6 +20,7 @@ class CharacterManager(Widget):
       constants.STAND_ATTACK_RIGHT: constants.MC_STAND_ATTACK_RIGHT,
       constants.RUNNING_LEFT: constants.MC_RUNNING_LEFT,
       constants.RUNNING_RIGHT: constants.MC_RUNNING_RIGHT,
+      constants.DAMAGED: constants.MC_DAMAGED
     }
     self.main_character = MainCharacter(mc_sources, constants.MC_LIFE_MAX)
 
@@ -30,6 +31,7 @@ class CharacterManager(Widget):
       constants.STAND_ATTACK_RIGHT: constants.HM_STAND_ATTACK_RIGHT,
       constants.RUNNING_LEFT: constants.HM_RUNNING_LEFT,
       constants.RUNNING_RIGHT: constants.HM_RUNNING_RIGHT,
+      constants.DAMAGED: constants.HM_DAMAGED
     }
     self.horse_man = GroundEnemy(ge_sources, self.main_character, constants.HM_LIFE_MAX)
     self.horse_man.x = constants.CHARACTER_STORAGE
@@ -162,6 +164,10 @@ class Character(Image):
     self.size = self.texture_size
 
     self.attacking = True
+    Clock.schedule_once(self.change_back, 0.2)
+
+  def damaged(self):
+    self.source = self.sources[constants.DAMAGED]
     Clock.schedule_once(self.change_back, 0.2)
 
   def change_back(self, dt):
@@ -309,9 +315,11 @@ class GroundEnemy(Character):
       if self.main_character.attacking:
         self.life_meter.decrease_life(constants.HIT_DMG)
         self.main_character.taunt_sounds[random.randint(0,2)].play()
+        self.damaged()
       if self.attacking:
         self.main_character.life_meter.decrease_life(constants.HIT_DMG)
         self.main_character.die_sounds[random.randint(0,1)].play()
+        self.main_character.damaged()
       else:
         self.attack()
 
