@@ -20,6 +20,7 @@ class CharacterManager(Widget):
       constants.STAND_ATTACK_RIGHT: constants.MC_STAND_ATTACK_RIGHT,
       constants.RUNNING_LEFT: constants.MC_RUNNING_LEFT,
       constants.RUNNING_RIGHT: constants.MC_RUNNING_RIGHT,
+      constants.DAMAGED: constants.MC_DAMAGED
     }
     self.main_character = MainCharacter(mc_sources, constants.MC_LIFE_MAX)
 
@@ -30,6 +31,7 @@ class CharacterManager(Widget):
       constants.STAND_ATTACK_RIGHT: constants.HM_STAND_ATTACK_RIGHT,
       constants.RUNNING_LEFT: constants.HM_RUNNING_LEFT,
       constants.RUNNING_RIGHT: constants.HM_RUNNING_RIGHT,
+      constants.DAMAGED: constants.HM_DAMAGED
     }
     self.horse_man = GroundEnemy(ge_sources, self.main_character, constants.HM_LIFE_MAX)
     self.horse_man.x = constants.CHARACTER_STORAGE
@@ -38,13 +40,15 @@ class CharacterManager(Widget):
       constants.WC_ROCK,
       constants.WC_ROCK_DMG,
       constants.WC_ROCK_SPEED,
-      self.main_character
+      self.main_character,
+      constants.WC_ROCK_IMAGE_DMG
     )
     self.playfull_girl = SoundedWeakEnemy(
       constants.WC_PLAYFULL_GIRL,
       constants.WC_PLAYFULL_GIRL_DMG,
       constants.WC_PLAYFULL_GIRL_SPEED,
       self.main_character,
+      constants.WC_PLAYFULL_GIRL_IMAGE_DMG,
       [
         SoundLoader.load(constants.WC_PLAYFULL_GIRL_YELL_SOUND_1),
         SoundLoader.load(constants.WC_PLAYFULL_GIRL_YELL_SOUND_2)
@@ -56,6 +60,7 @@ class CharacterManager(Widget):
       constants.WC_FROGMAN_DMG,
       constants.WC_FROGMAN_SPEED,
       self.main_character,
+      constants.WC_FROGMAN_IMAGE_DMG,
       [
         SoundLoader.load(constants.WC_FROGMAN_YELL_SOUND_1),
         SoundLoader.load(constants.WC_FROGMAN_YELL_SOUND_2)
@@ -162,6 +167,10 @@ class Character(Image):
     self.size = self.texture_size
 
     self.attacking = True
+    Clock.schedule_once(self.change_back, 0.2)
+
+  def damaged(self):
+    self.source = self.sources[constants.DAMAGED]
     Clock.schedule_once(self.change_back, 0.2)
 
   def change_back(self, dt):
@@ -309,9 +318,11 @@ class GroundEnemy(Character):
       if self.main_character.attacking:
         self.life_meter.decrease_life(constants.HIT_DMG)
         self.main_character.taunt_sounds[random.randint(0,2)].play()
+        self.damaged()
       if self.attacking:
         self.main_character.life_meter.decrease_life(constants.HIT_DMG)
         self.main_character.die_sounds[random.randint(0,1)].play()
+        self.main_character.damaged()
       else:
         self.attack()
 
@@ -365,10 +376,11 @@ class GroundEnemy(Character):
     self.active = False
 
 class WeakEnemy(Image):
-  def __init__(self, source, dmg, speed, main_character, **kwargs):
+  def __init__(self, source, dmg, speed, main_character, damaged_img, **kwargs):
     super(WeakEnemy, self).__init__(source=constants.WC_ROCK, x=constants.CHARACTER_STORAGE, y=constants.STANDING_Y)
     self.the_source = source
     self.dmg = dmg
+    self.damaged_img = damaged_img
     self.speed = speed
     self.main_character = main_character
     self.attacking = False
@@ -381,15 +393,24 @@ class WeakEnemy(Image):
       else:
         self.move_enemy()
 
+  def damaged(self):
+    self.source = self.damaged_img
+    self.size = self.texture_size
+    self.resetting = True
+    self.x += 100
+    Clock.schedule_once(self.reset_pend, 0.2)
+
   def check_collisions(self, dt):
     if self.collide_widget(self.main_character):
       if not self.main_character.attacking:
         self.main_character.life_meter.decrease_life(self.dmg)
         self.main_character.die_sounds[random.randint(0,1)].play()
+        self.main_character.damaged()
+        self.reset()
       else:
         self.main_character.taunt_sounds[random.randint(0,2)].play()
+        self.damaged()
       self.move_enemy()
-      self.reset()
 
   def move_enemy(self):
     self.x -= self.speed
@@ -405,13 +426,18 @@ class WeakEnemy(Image):
     Clock.unschedule(self.check_collisions)
     Clock.unschedule(self.attack_player)
 
+  def reset_pend(self, dt):
+    self.reset()
+
   def reset(self):
     self.x = constants.CHARACTER_STORAGE
+    self.source = self.the_source
+    self.size = self.texture_size
     self.attacking = False
 
 class SoundedWeakEnemy(WeakEnemy):
-  def __init__(self, source, dmg, speed, main_character, normal_sounds, die_sound, **kwargs):
-    super(SoundedWeakEnemy, self).__init__(source, dmg, speed, main_character)
+  def __init__(self, source, dmg, speed, main_character, damaged_img, normal_sounds, die_sound, **kwargs):
+    super(SoundedWeakEnemy, self).__init__(source, dmg, speed, main_character, damaged_img)
     self.normal_sounds = normal_sounds
     self.die_sound = die_sound
 
