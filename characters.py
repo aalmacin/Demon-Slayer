@@ -54,7 +54,8 @@ class CharacterManager(Widget):
         SoundLoader.load(constants.WC_PLAYFULL_GIRL_YELL_SOUND_1),
         SoundLoader.load(constants.WC_PLAYFULL_GIRL_YELL_SOUND_2)
       ],
-      SoundLoader.load(constants.WC_PLAYFULL_GIRL_DIE_SOUND)
+      SoundLoader.load(constants.WC_PLAYFULL_GIRL_DIE_SOUND),
+      jumper=True
     )
     self.frogman = SoundedWeakEnemy(
       constants.WC_FROGMAN,
@@ -66,7 +67,8 @@ class CharacterManager(Widget):
         SoundLoader.load(constants.WC_FROGMAN_YELL_SOUND_1),
         SoundLoader.load(constants.WC_FROGMAN_YELL_SOUND_2)
       ],
-      SoundLoader.load(constants.WC_FROGMAN_DIE_SOUND)
+      SoundLoader.load(constants.WC_FROGMAN_DIE_SOUND),
+      jumper=True
     )
 
     self.weak_enemies = []
@@ -254,6 +256,7 @@ class MainCharacter(Character):
       super(MainCharacter, self).change_back(dt)
     else:
       self.attacking = False
+      self.hit = False
       self.source = self.sources[constants.RUNNING_RIGHT]
       self.size = self.texture_size
 
@@ -385,12 +388,14 @@ class GroundEnemy(Character):
     self.active = False
 
 class WeakEnemy(Image):
-  def __init__(self, source, dmg, speed, main_character, damaged_img, **kwargs):
+  def __init__(self, source, dmg, speed, main_character, damaged_img, jumper=False, **kwargs):
     super(WeakEnemy, self).__init__(source=constants.WC_ROCK, x=constants.CHARACTER_STORAGE, y=constants.STANDING_Y)
     self.the_source = source
     self.dmg = dmg
     self.damaged_img = damaged_img
     self.speed = speed
+    self.jumper = jumper
+    self.jumping = False
     self.main_character = main_character
     self.attacking = False
     self.size = self.texture_size
@@ -422,7 +427,15 @@ class WeakEnemy(Image):
       self.move_enemy()
 
   def move_enemy(self):
+    def change_back_from_jump(dt):
+      self.jumping = False
     self.x -= self.speed
+    print self.jumper
+    if not self.jumping and self.jumper:
+      self.jumping = True
+      anim = Animation(y=constants.JUMP_HEIGHT + 100, duration=0.4) + Animation(y=constants.STANDING_Y, duration=0.4)
+      anim.start(self)
+      Clock.schedule_once(change_back_from_jump, random.randint(0,4))
 
   def on_enter(self):
     self.source = self.the_source
@@ -445,8 +458,8 @@ class WeakEnemy(Image):
     self.attacking = False
 
 class SoundedWeakEnemy(WeakEnemy):
-  def __init__(self, source, dmg, speed, main_character, damaged_img, normal_sounds, die_sound, **kwargs):
-    super(SoundedWeakEnemy, self).__init__(source, dmg, speed, main_character, damaged_img)
+  def __init__(self, source, dmg, speed, main_character, damaged_img, normal_sounds, die_sound, jumper=False, **kwargs):
+    super(SoundedWeakEnemy, self).__init__(source, dmg, speed, main_character, damaged_img, jumper)
     self.normal_sounds = normal_sounds
     self.die_sound = die_sound
 
