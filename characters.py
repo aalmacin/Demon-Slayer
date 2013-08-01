@@ -307,6 +307,9 @@ class GroundEnemy(Character):
     self.x = constants.CHARACTER_STORAGE
     self.main_character = main_character
     Clock.schedule_interval(self.check_life, 0.1)
+    
+    self.taunt_sounds = [SoundLoader.load(constants.HM_TAUNT_SOUND_1),SoundLoader.load(constants.HM_TAUNT_SOUND_2)]
+    self.die_sounds = [SoundLoader.load(constants.HM_DIE_SOUND_1),SoundLoader.load(constants.HM_DIE_SOUND_2),SoundLoader.load(constants.HM_DIE_SOUND_3)]
 
     self.milliseconds = 0
     Clock.schedule_interval(self.check_collisions, 0)
@@ -323,9 +326,11 @@ class GroundEnemy(Character):
       if self.main_character.attacking:
         self.life_meter.decrease_life(constants.HIT_DMG)
         self.main_character.taunt_sounds[random.randint(0,2)].play()
+        self.die_sounds[random.randint(0,1)].play()
         self.damaged()
       if self.attacking:
         self.main_character.life_meter.decrease_life(constants.HIT_DMG)
+        self.taunt_sounds[random.randint(0,1)].play()
         self.main_character.die_sounds[random.randint(0,1)].play()
         self.main_character.damaged()
       else:
