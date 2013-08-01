@@ -397,7 +397,7 @@ class WeakEnemy(Image):
     self.source = self.damaged_img
     self.size = self.texture_size
     self.resetting = True
-    self.x += 100
+    self.x += 300
     Clock.schedule_once(self.reset_pend, 0.2)
 
   def check_collisions(self, dt):
