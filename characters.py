@@ -79,7 +79,7 @@ class CharacterManager(Widget):
     self.add_widget(self.rock_obstacle)
     self.add_widget(self.playfull_girl)
     self.add_widget(self.frogman)
-    
+
   def reset(self):
     self.horse_man.reset()
     self.main_character.reset()
@@ -136,6 +136,7 @@ class Character(Image):
     self.moving = False
     self.attacking = False
     self.jumping = False
+    self.hit = False
 
     Clock.schedule_interval(self.show_life, 0)
 
@@ -165,20 +166,23 @@ class Character(Image):
       self.jumping = True
 
   def attack(self):
-    if self.to_right:
-      self.source = self.sources[constants.STAND_ATTACK_RIGHT]
-    else:
-      self.source = self.sources[constants.STAND_ATTACK_LEFT]
-    self.size = self.texture_size
+    if not self.hit:
+      if self.to_right:
+        self.source = self.sources[constants.STAND_ATTACK_RIGHT]
+      else:
+        self.source = self.sources[constants.STAND_ATTACK_LEFT]
+      self.size = self.texture_size
 
-    self.attacking = True
-    Clock.schedule_once(self.change_back, 0.2)
+      self.attacking = True
+      Clock.schedule_once(self.change_back, 0.2)
 
   def damaged(self):
     self.source = self.sources[constants.DAMAGED]
+    self.hit = True
     Clock.schedule_once(self.change_back, 0.2)
 
   def change_back(self, dt):
+    self.hit = False
     self.attacking = False
     if self.to_right:
       if self.moving:
