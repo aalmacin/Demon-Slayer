@@ -23,7 +23,6 @@ class StartScreen(Screen):
   def __init__(self, **kwargs):
     super(StartScreen, self).__init__(**kwargs)
     #self.background = ParallaxBG()
-    
     #temp background, would like to use same paralax as in main loop, have it run in main, 
     #over top of all other loops(game, menu, game over etc)
     self.bg = Image(source=constants.NIGHT_BG)
@@ -57,25 +56,27 @@ class StartScreen(Screen):
     self.quit.size_hint = constants.SMALL_BTN_SIZE
     self.quit.font_size = constants.SMALL_FNT_SIZE
     self.quit.pos = (1000,100)
-    
+  #when start button pressed   
   def start_btn_pressed(self, instance):
     self.parent.current = constants.MAIN_SCREEN
-    
+  #when how_to_play button pressed  
   def how_to_play_btn_pressed(self, instance):
     self.parent.current = constants.INSTRUCTION_SCREEN
-    
+  #when quit button pressed  
   def quit_btn_pressed(self, instance):
-    App.get_running_app().stop()
+    App.get_running_app().stop() #stop app
     
 class InstructionScreen(Screen):
   def __init__(self, **kwargs):
     super(InstructionScreen, self).__init__(**kwargs)
+    #background
     self.bg = Image(source=constants.NIGHT_BG)
     self.bg.size = self.bg.texture_size
     self.add_widget(self.bg)
     self.cloud_1 = Image(source = constants.CLOUD_LEFT_BG)
     self.cloud_1.size = self.bg.texture_size
     self.add_widget(self.cloud_1)
+    #instructions
     self.instructions = Label(text = "D - move right.\n"+
                                      "A - move left.\n"+
                                      "W - Jump.\n"+
@@ -92,16 +93,27 @@ class InstructionScreen(Screen):
     self.go_back.size_hint = constants.SMALL_BTN_SIZE
     self.go_back.font_size = constants.STANDARD_FNT_SIZE
     self.go_back.pos = (1000,180)
-   
+  #when go back btton pressed 
   def go_back_btn_pressed(self, instance):
     self.parent.current = constants.START_SCREEN
 
 class GameOverScreen(Screen):
   def __init__(self, **kwargs):
     super(GameOverScreen, self).__init__(**kwargs)
+    #background 
+    self.bg = Image(source=constants.NIGHT_BG)
+    self.bg.size = self.bg.texture_size
+    self.add_widget(self.bg)
+    self.cloud_1 = Image(source = constants.CLOUD_LEFT_BG)
+    self.cloud_1.size = self.bg.texture_size
+    self.add_widget(self.cloud_1)
+    #button
     self.restarter = Button(text=constants.GAME_OVER_MSG)
     self.add_widget(self.restarter)
     self.restarter.bind(on_press= self.play_again_btn_pressed)
-
+    self.restarter.size_hint = constants.SMALL_BTN_SIZE
+    self.restarter.font_size = constants.SMALL_FNT_SIZE
+    self.restarter.pos = (1000,100)
+#when restart button is pressed
   def play_again_btn_pressed(self, instance):
     self.parent.current = constants.MAIN_SCREEN
