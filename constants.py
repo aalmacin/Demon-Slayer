@@ -12,7 +12,7 @@ START_MSG = "Start Game"
 HOW_TO_MSG = "How To Play"
 GO_BACK_MSG = "Go Back"
 QUIT_GAME_MSG = "Quit"
-GAME_OVER_MSG = "Click anywhere to play again"
+GAME_OVER_MSG = "Play Again"
 #difficulties
 DIFFICULTY_EASY = 1
 DIFFICULTY_MEDIUM = 2

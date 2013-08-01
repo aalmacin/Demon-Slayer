@@ -113,15 +113,36 @@ class GameOverScreen(Screen):
     self.cloud_1.size = self.bg.texture_size
     self.add_widget(self.cloud_1)
     #button
-    self.restarter = Button(text=constants.GAME_OVER_MSG)
-    self.add_widget(self.restarter)
-    self.restarter.bind(on_press= self.play_again_btn_pressed)
-    self.restarter.size_hint = constants.SMALL_BTN_SIZE
-    self.restarter.font_size = constants.STANDARD_FNT_SIZE
-    self.restarter.pos = (1000,100)
+    self.play_again_btn = Button(text=constants.GAME_OVER_MSG)
+    self.add_widget(self.play_again_btn)
+    self.play_again_btn.bind(on_press= self.play_again_btn_pressed)
+    self.play_again_btn.size_hint = constants.SMALL_BTN_SIZE
+    self.play_again_btn.font_size = constants.STANDARD_FNT_SIZE
+    self.play_again_btn.pos = (1000,260)
+    #go back button
+    self.go_back = Button(text=constants.GO_BACK_MSG)
+    self.add_widget(self.go_back)
+    self.go_back.bind(on_press= self.go_back_btn_pressed)
+    self.go_back.size_hint = constants.SMALL_BTN_SIZE
+    self.go_back.font_size = constants.STANDARD_FNT_SIZE
+    self.go_back.pos = (1000,180)
+    #quit quits game
+    self.quit = Button(text=constants.QUIT_GAME_MSG)
+    self.add_widget(self.quit)
+    self.quit.bind(on_press= self.quit_btn_pressed)
+    self.quit.size_hint = constants.SMALL_BTN_SIZE
+    self.quit.font_size = constants.STANDARD_FNT_SIZE
+    self.quit.pos = (1000,100)
+    
 #when restart button is pressed
   def play_again_btn_pressed(self, instance):
     self.parent.current = constants.MAIN_SCREEN
+  #when go back btton pressed
+  def go_back_btn_pressed(self, instance):
+    self.parent.current = constants.START_SCREEN
+  #when quit button pressed
+  def quit_btn_pressed(self, instance):
+    App.get_running_app().stop() #stop app
 
 class DifficultyScreen(Screen):
   def __init__(self, **kwargs):
