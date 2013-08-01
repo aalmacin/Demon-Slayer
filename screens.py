@@ -36,18 +36,19 @@ class StartScreen(Screen):
     self.cloud_1.size = self.bg.texture_size
     self.add_widget(self.cloud_1)
     #title
-    self.game_title = Label(text = "Demon Slayer", font_size = constants.LARGE_FNT_SIZE)
+    self.game_title = Label(text = "Demon Slayer")
+    self.game_title.font_size = constants.LARGE_FNT_SIZE
     self.add_widget(self.game_title)
     self.game_title.pos = (-125,-25)
     #start button
-    self.starter = Button(text=constants.START_MSG, font_size=14)
+    self.starter = Button(text=constants.START_MSG)
     self.add_widget(self.starter)
     self.starter.bind(on_press= self.start_btn_pressed)
     self.starter.size_hint = constants.SMALL_BTN_SIZE
     self.starter.font_size = constants.STANDARD_FNT_SIZE
     self.starter.pos = (1000,260)
     #how to play button, goes to different screen
-    self.how_to_play = Button(text=constants.HOW_TO_MSG, font_size=14)
+    self.how_to_play = Button(text=constants.HOW_TO_MSG)
     self.add_widget(self.how_to_play)
     self.how_to_play.bind(on_press= self.how_to_play_btn_pressed)
     self.how_to_play.size_hint = constants.SMALL_BTN_SIZE
@@ -58,11 +59,11 @@ class StartScreen(Screen):
     self.add_widget(self.quit)
     self.quit.bind(on_press= self.quit_btn_pressed)
     self.quit.size_hint = constants.SMALL_BTN_SIZE
-    self.quit.font_size = constants.SMALL_FNT_SIZE
+    self.quit.font_size = constants.STANDARD_FNT_SIZE
     self.quit.pos = (1000,100)
   #when start button pressed
   def start_btn_pressed(self, instance):
-    self.parent.current = constants.MAIN_SCREEN
+    self.parent.current = constants.DIFFICULTY_SCREEN
   #when how_to_play button pressed
   def how_to_play_btn_pressed(self, instance):
     self.parent.current = constants.INSTRUCTION_SCREEN
@@ -116,8 +117,66 @@ class GameOverScreen(Screen):
     self.add_widget(self.restarter)
     self.restarter.bind(on_press= self.play_again_btn_pressed)
     self.restarter.size_hint = constants.SMALL_BTN_SIZE
-    self.restarter.font_size = constants.SMALL_FNT_SIZE
+    self.restarter.font_size = constants.STANDARD_FNT_SIZE
     self.restarter.pos = (1000,100)
 #when restart button is pressed
   def play_again_btn_pressed(self, instance):
+    self.parent.current = constants.MAIN_SCREEN
+
+class DifficultyScreen(Screen):
+  def __init__(self, **kwargs):
+    super(DifficultyScreen, self).__init__(**kwargs)
+    #self.background = ParallaxBG()
+    #temp background, would like to use same paralax as in main loop, have it run in main,
+    #over top of all other loops(game, menu, game over etc)
+    self.bg = Image(source=constants.NIGHT_BG)
+    self.bg.size = self.bg.texture_size
+    self.add_widget(self.bg)
+    self.cloud_1 = Image(source = constants.CLOUD_LEFT_BG)
+    self.cloud_1.size = self.bg.texture_size
+    self.add_widget(self.cloud_1)
+    #title
+    self.game_title = Label(text = "Demon Slayer")
+    self.game_title.font_size = constants.LARGE_FNT_SIZE
+    self.add_widget(self.game_title)
+    self.game_title.pos = (-125,-25)
+    #easy button
+    self.easy_choice = Button(text="Easy")
+    self.add_widget(self.easy_choice)
+    self.easy_choice.bind(on_press= self.easy_btn_pressed)
+    self.easy_choice.size_hint = constants.SMALL_BTN_SIZE
+    self.easy_choice.font_size = constants.STANDARD_FNT_SIZE
+    self.easy_choice.pos = (1000,260)
+    #medium button
+    self.medium_choice = Button(text="Medium")
+    self.add_widget(self.medium_choice)
+    self.medium_choice.bind(on_press= self.medium_btn_pressed)
+    self.medium_choice.size_hint = constants.SMALL_BTN_SIZE
+    self.medium_choice.font_size = constants.STANDARD_FNT_SIZE
+    self.medium_choice.pos = (1000,180)
+   #hard button
+    self.hard_choice = Button(text="Hard")
+    self.add_widget(self.hard_choice)
+    self.hard_choice.bind(on_press= self.hard_btn_pressed)
+    self.hard_choice.size_hint = constants.SMALL_BTN_SIZE
+    self.hard_choice.font_size = constants.STANDARD_FNT_SIZE
+    self.hard_choice.pos = (1000,100)
+    #go back button
+    self.go_back = Button(text=constants.GO_BACK_MSG, font_size=constants.SMALL_FNT_SIZE)
+    self.add_widget(self.go_back)
+    self.go_back.bind(on_press= self.go_back_btn_pressed)
+    self.go_back.size_hint = constants.SMALL_BTN_SIZE
+    self.go_back.font_size = constants.STANDARD_FNT_SIZE
+    self.go_back.pos = (1000,20)
+  #when go back btton pressed
+  def go_back_btn_pressed(self, instance):
+    self.parent.current = constants.START_SCREEN
+  #when start button pressed
+  def easy_btn_pressed(self, instance):
+    self.parent.current = constants.MAIN_SCREEN
+  #when how_to_play button pressed
+  def medium_btn_pressed(self, instance):
+    self.parent.current = constants.MAIN_SCREEN
+  #when quit button pressed
+  def hard_btn_pressed(self, instance):
     self.parent.current = constants.MAIN_SCREEN

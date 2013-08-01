@@ -4,6 +4,7 @@ HEIGHT = 700
 #Screens
 MAIN_SCREEN = "main_screen"
 INSTRUCTION_SCREEN = "instruction_screen"
+DIFFICULTY_SCREEN = "difficulty_screen"
 GAME_OVER_SCREEN = "game_over_screen"
 START_SCREEN = "start_screen"
 #messages
@@ -12,6 +13,10 @@ HOW_TO_MSG = "How To Play"
 GO_BACK_MSG = "Go Back"
 QUIT_GAME_MSG = "Quit"
 GAME_OVER_MSG = "Click anywhere to play again"
+#difficulties
+DIFFICULTY_EASY = 1
+DIFFICULTY_MEDIUM = 2
+DIFFICULTY_HARD = 3
 #button size
 LARGE_BTN_SIZE = (0.5, 0.3)
 STANDARD_BTN_SIZE = (0.4, 0.2)
