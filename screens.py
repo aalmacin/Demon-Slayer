@@ -173,10 +173,13 @@ class DifficultyScreen(Screen):
     self.parent.current = constants.START_SCREEN
   #when start button pressed
   def easy_btn_pressed(self, instance):
+    self.parent.difficulty = constants.DIFFICULTY_EASY
     self.parent.current = constants.MAIN_SCREEN
   #when how_to_play button pressed
   def medium_btn_pressed(self, instance):
+    self.parent.difficulty = constants.DIFFICULTY_MEDIUM
     self.parent.current = constants.MAIN_SCREEN
   #when quit button pressed
   def hard_btn_pressed(self, instance):
+    self.parent.difficulty = constants.DIFFICULTY_HARD
     self.parent.current = constants.MAIN_SCREEN
