@@ -92,7 +92,7 @@ DAMAGED = "damaged"
 #Weak Character
 WC_LIFE_MAX = 1
 WC_ROCK = "images/Rock.png"
-WC_ROCK_IMAGE_DMG = "images/FrogmanDamaged.png"
+WC_ROCK_IMAGE_DMG = "images/RockDamaged.png"
 WC_ROCK_DMG = 10
 WC_ROCK_SPEED = 15
 WC_PLAYFULL_GIRL = "images/PlayfullGirlRunning.zip"
