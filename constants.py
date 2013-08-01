@@ -33,6 +33,7 @@ MC_STAND_RIGHT = "images/KatipuneroStandRight.png"
 MC_STAND_ATTACK_RIGHT = "images/KatipuneroStandAttackRight.png"
 MC_STAND_ATTACK_LEFT = "images/KatipuneroStandAttackLeft.png"
 MC_DAMAGED = "images/KatipuneroDamaged.png"
+MC_DEAD = "images/KatipuneroDead.png"
 MC_X = 50
 MC_LIFE_MAX = 200
 MC_TAUNT_SOUND_1 = "sounds/Katipunero_taunt_1.wav"
@@ -48,6 +49,7 @@ HM_STAND_RIGHT = "images/TikbalangStandRight.png"
 HM_STAND_ATTACK_RIGHT = "images/TikbalangStandAttackRight.png"
 HM_STAND_ATTACK_LEFT = "images/TikbalangStandAttackLeft.png"
 HM_DAMAGED = "images/TikbalangDamaged.png"
+HM_DEAD = "images/TikbalangDead.png"
 HM_TAUNT_SOUND_1 = "sounds/Tikbalang_taunt_1.wav"
 HM_TAUNT_SOUND_2 = "sounds/Tikbalang_taunt_2.wav"
 HM_DIE_SOUND_1 = "sounds/Tikbalang_die_1.wav"
@@ -78,7 +80,7 @@ JUMP_DURATION = 0.5
 MIN_X = 2
 CHARACTER_STORAGE = 1800
 BOSS_POSITION = 700
-ENEMY_MAX = 20
+ENEMY_MAX = 2
 
 #source keys
 STAND_LEFT = "stand left"
@@ -88,6 +90,7 @@ STAND_ATTACK_RIGHT = "stand attack right"
 RUNNING_LEFT = "running left"
 RUNNING_RIGHT = "running right"
 DAMAGED = "damaged"
+DEAD = "dead"
 
 #Weak Character
 WC_LIFE_MAX = 1
