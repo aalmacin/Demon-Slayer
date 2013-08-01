@@ -11,6 +11,7 @@ from kivy.app import *
 class CharacterManager(Widget):
   def __init__(self, **kwargs):
     super(CharacterManager, self).__init__(**kwargs)
+    self.difficulty = constants.DIFFICULTY_EASY
     self.enemy_count = 0
 
     mc_sources = {
@@ -33,19 +34,19 @@ class CharacterManager(Widget):
       constants.RUNNING_RIGHT: constants.HM_RUNNING_RIGHT,
       constants.DAMAGED: constants.HM_DAMAGED
     }
-    self.horse_man = GroundEnemy(ge_sources, self.main_character, constants.HM_LIFE_MAX)
+    self.horse_man = GroundEnemy(ge_sources, self.main_character, constants.HM_LIFE_MAX * self.difficulty)
     self.horse_man.x = constants.CHARACTER_STORAGE
 
     self.rock_obstacle = WeakEnemy(
       constants.WC_ROCK,
-      constants.WC_ROCK_DMG,
+      constants.WC_ROCK_DMG * self.difficulty,
       constants.WC_ROCK_SPEED,
       self.main_character,
       constants.WC_ROCK_IMAGE_DMG
     )
     self.playfull_girl = SoundedWeakEnemy(
       constants.WC_PLAYFULL_GIRL,
-      constants.WC_PLAYFULL_GIRL_DMG,
+      constants.WC_PLAYFULL_GIRL_DMG * self.difficulty,
       constants.WC_PLAYFULL_GIRL_SPEED,
       self.main_character,
       constants.WC_PLAYFULL_GIRL_IMAGE_DMG,
@@ -57,7 +58,7 @@ class CharacterManager(Widget):
     )
     self.frogman = SoundedWeakEnemy(
       constants.WC_FROGMAN,
-      constants.WC_FROGMAN_DMG,
+      constants.WC_FROGMAN_DMG * self.difficulty,
       constants.WC_FROGMAN_SPEED,
       self.main_character,
       constants.WC_FROGMAN_IMAGE_DMG,
@@ -78,7 +79,7 @@ class CharacterManager(Widget):
     self.add_widget(self.rock_obstacle)
     self.add_widget(self.playfull_girl)
     self.add_widget(self.frogman)
-
+    
   def reset(self):
     self.horse_man.reset()
     self.main_character.reset()
@@ -99,6 +100,10 @@ class CharacterManager(Widget):
       Clock.unschedule(self.check_boss_fight)
 
   def on_enter(self):
+    self.difficulty = self.parent.parent.difficulty
+    self.rock_obstacle.dmg = constants.WC_ROCK_DMG * self.difficulty
+    self.playfull_girl.dmg = constants.WC_PLAYFULL_GIRL_DMG * self.difficulty
+    self.frogman.dmg = constants.WC_FROGMAN_DMG * self.difficulty
     self.horse_man.on_enter()
     self.main_character.on_enter()
     for weak_enemy in self.weak_enemies:
