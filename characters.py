@@ -348,11 +348,11 @@ class GroundEnemy(Character):
       if self.collide_widget(self.main_character) and not self.hit:
         if self.main_character.attacking:
           self.damaged()
-          self.life_meter.decrease_life(constants.HIT_DMG)
+          self.life_meter.decrease_life(constants.MAIN_CHAR_HIT_DMG)
           self.main_character.taunt_sounds[random.randint(0,2)].play()
         if self.attacking:
           self.main_character.damaged()
-          self.main_character.life_meter.decrease_life(constants.HIT_DMG)
+          self.main_character.life_meter.decrease_life(constants.HIT_DMG * self.parent.difficulty)
           self.main_character.die_sounds[random.randint(0,1)].play()
         self.attack()
 
@@ -392,6 +392,15 @@ class GroundEnemy(Character):
           else:
             self.moving = True
             self.to_right = random.randint(0,1)
+
+  def damaged(self):
+    super(GroundEnemy, self).damaged()
+    if self.main_character.to_right:
+      self.x += 200
+    else:
+      self.x -= 200
+    self.source = self.sources[constants.DAMAGED]
+    self.size = self.texture_size
 
   def return_to_normal(self, dt):
     if self.alive and self.main_character.alive:

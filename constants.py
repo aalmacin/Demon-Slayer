@@ -60,6 +60,7 @@ HM_LIFE_MAX = 50
 SECONDS_CHECK = 10
 MOVE_ANIM = 30
 HIT_DMG = 0.5
+MAIN_CHAR_HIT_DMG = 5
 #Parallax values
 CLOUD_LEFT_BG = "images/Clouds_01.png"
 CLOUD_RIGHT_BG = "images/Clouds_02.png"
@@ -80,7 +81,7 @@ JUMP_DURATION = 0.5
 MIN_X = 2
 CHARACTER_STORAGE = 1800
 BOSS_POSITION = 700
-ENEMY_MAX = 2
+ENEMY_MAX = 25
 
 #source keys
 STAND_LEFT = "stand left"
