@@ -33,6 +33,7 @@ MC_STAND_RIGHT = "images/KatipuneroStandRight.png"
 MC_STAND_ATTACK_RIGHT = "images/KatipuneroStandAttackRight.png"
 MC_STAND_ATTACK_LEFT = "images/KatipuneroStandAttackLeft.png"
 MC_DAMAGED = "images/KatipuneroDamaged.png"
+MC_DEAD = "images/KatipuneroDead.png"
 MC_X = 50
 MC_LIFE_MAX = 200
 MC_TAUNT_SOUND_1 = "sounds/Katipunero_taunt_1.wav"
@@ -48,6 +49,7 @@ HM_STAND_RIGHT = "images/TikbalangStandRight.png"
 HM_STAND_ATTACK_RIGHT = "images/TikbalangStandAttackRight.png"
 HM_STAND_ATTACK_LEFT = "images/TikbalangStandAttackLeft.png"
 HM_DAMAGED = "images/TikbalangDamaged.png"
+HM_DEAD = "images/TikbalangDead.png"
 HM_TAUNT_SOUND_1 = "sounds/Tikbalang_taunt_1.wav"
 HM_TAUNT_SOUND_2 = "sounds/Tikbalang_taunt_2.wav"
 HM_DIE_SOUND_1 = "sounds/Tikbalang_die_1.wav"
@@ -58,6 +60,7 @@ HM_LIFE_MAX = 50
 SECONDS_CHECK = 10
 MOVE_ANIM = 30
 HIT_DMG = 0.5
+MAIN_CHAR_HIT_DMG = 5
 #Parallax values
 CLOUD_LEFT_BG = "images/Clouds_01.png"
 CLOUD_RIGHT_BG = "images/Clouds_02.png"
@@ -78,7 +81,7 @@ JUMP_DURATION = 0.5
 MIN_X = 2
 CHARACTER_STORAGE = 1800
 BOSS_POSITION = 700
-ENEMY_MAX = 20
+ENEMY_MAX = 25
 
 #source keys
 STAND_LEFT = "stand left"
@@ -88,6 +91,7 @@ STAND_ATTACK_RIGHT = "stand attack right"
 RUNNING_LEFT = "running left"
 RUNNING_RIGHT = "running right"
 DAMAGED = "damaged"
+DEAD = "dead"
 
 #Weak Character
 WC_LIFE_MAX = 1
@@ -113,3 +117,7 @@ WC_FROGMAN_SPEED = 23
 AMBIENT_NIGHT_LOOP = "sounds/ambient_night_1.wav"
 THEME_INTRO_SOUND = "sounds/theme_song_intro.wav"
 THEME_LOOP = "sounds/theme_song_loop.wav"
+#special items
+HEART_IMG = "images/heart.png"
+CANDY_IMG = "images/candy.png"
+COIN_IMG = "images/coin.png"
