@@ -1,6 +1,7 @@
 from kivy.uix.widget import Widget
 from kivy.uix.image import Image
 from kivy.uix.progressbar import ProgressBar
+from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.animation import Animation
@@ -84,11 +85,15 @@ class CharacterManager(Widget):
     self.weak_enemies.append(self.playfull_girl)
     self.weak_enemies.append(self.frogman)
 
+    self.scorer = Scorer(self.main_character)
+    self.scorer.pos = (200, 600)
+
     self.add_widget(self.main_character)
     self.add_widget(self.horse_man)
     self.add_widget(self.rock_obstacle)
     self.add_widget(self.playfull_girl)
     self.add_widget(self.frogman)
+    self.add_widget(self.scorer)
 
   def reset(self):
     self.horse_man.reset()
@@ -418,6 +423,8 @@ class GroundEnemy(Character):
     if not self.alive:
       self.source = self.sources[constants.DEAD]
       self.size = self.texture_size
+      self.main_character.score += 1000
+      Clock.unschedule(self.check_life)
       Clock.unschedule(self.check_collisions)
       Clock.unschedule(self.decide_actions)
 
@@ -565,6 +572,15 @@ class LifeMeter(ProgressBar):
 
   def reset(self):
     self.value = self.max
+
+class Scorer(Label):
+  def __init__(self, main_character, **kwargs):
+    super(Scorer, self).__init__(font_size="80px", **kwargs)
+    self.main_character = main_character
+    Clock.schedule_interval(self.update_text, 0)
+
+  def update_text(self, dt):
+    self.text = "Score: " + str(self.main_character.score)
 
 class SpecialItem(Image):
   def __init__(self, main_character, **kwargs):
