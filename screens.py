@@ -1,6 +1,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.button import Button
 from kivy.uix.button import Label
+from kivy.uix.image import Image
 from parallax_bg import ParallaxBG
 from characters import *
 import constants
@@ -133,7 +134,7 @@ class GameOverScreen(Screen):
     self.quit.size_hint = constants.SMALL_BTN_SIZE
     self.quit.font_size = constants.STANDARD_FNT_SIZE
     self.quit.pos = (1000,100)
-    
+
 #when restart button is pressed
   def play_again_btn_pressed(self, instance):
     self.parent.current = constants.MAIN_SCREEN

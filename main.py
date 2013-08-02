@@ -16,15 +16,11 @@ from kivy.uix.screenmanager import *
 from kivy.base import EventLoop
 import constants
 
-Factory.register("ParallaxBG", ParallaxBG)
-Factory.register("MainScreen", MainScreen)
-Factory.register("MainCharacter", MainCharacter)
-
 class DemonSlayer(ScreenManager):
   def __init__(self, transition):
     super(ScreenManager, self).__init__(transition=transition)
     self.difficulty = constants.DIFFICULTY_EASY
-    
+
     self.start_screen = StartScreen(name=constants.START_SCREEN)
     self.game_over_screen = GameOverScreen(name=constants.GAME_OVER_SCREEN)
     self.main_screen = MainScreen(name=constants.MAIN_SCREEN)

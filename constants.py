@@ -121,3 +121,7 @@ THEME_LOOP = "sounds/theme_song_loop.wav"
 HEART_IMG = "images/heart.png"
 CANDY_IMG = "images/candy.png"
 COIN_IMG = "images/coin.png"
+#positions
+SCORER_POS = (100, 610)
+#Strings
+SCORE_TEXT = "Score: "
