@@ -1,6 +1,7 @@
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 from kivy.uix.progressbar import ProgressBar
+from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.properties import *
 from kivy.app import App
@@ -18,6 +19,19 @@ class CharacterManager(Widget):
     self.scorer = Scorer()
     self.scorer.pos = constants.SCORER_POS
     self.add_widget(self.scorer)
+
+    mc_sources = {
+      constants.STAND_RIGHT: constants.MC_STAND_RIGHT,
+      constants.STAND_LEFT: constants.MC_STAND_LEFT,
+      constants.STAND_ATTACK_LEFT: constants.MC_STAND_ATTACK_LEFT,
+      constants.STAND_ATTACK_RIGHT: constants.MC_STAND_ATTACK_RIGHT,
+      constants.RUNNING_LEFT: constants.MC_RUNNING_LEFT,
+      constants.RUNNING_RIGHT: constants.MC_RUNNING_RIGHT,
+      constants.DAMAGED: constants.MC_DAMAGED,
+      constants.DEAD: constants.MC_DEAD
+    }
+    self.main_character = MainCharacter(mc_sources, constants.MC_LIFE_MAX)
+    self.add_widget(self.main_character)
 
   """
     Method: on_enter
@@ -58,7 +72,8 @@ class Character(Widget):
   def __init__(self, sources, max_life, **kwargs):
     super(Character, self).__init__(**kwargs)
     self.sources = sources
-    self.life_meter = LifeMeter(max_life)
+    self.life_meter = LifeMeter(max=max_life)
+    self.add_widget(self.life_meter)
 
   """
     Method: on_enter
@@ -131,25 +146,60 @@ class MainCharacter(Character):
   """
     Constructor
   """
-  def __init__(self, **kwargs):
-    super(MainCharacter, self).__init__(**kwargs)
+  keyboard_on = BooleanProperty(False)
+  def __init__(self, sources, max_life, **kwargs):
+    super(MainCharacter, self).__init__(sources, max_life, **kwargs)
+    self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
+    self._keyboard.bind(on_key_down=self._on_keyboard_down)
+    self._keyboard.bind(on_key_up=self._on_keyboard_up)
+    self.sources = sources
+    self.source = self.sources[constants.STAND_RIGHT]
+    self.pos = (constants.MC_X, constants.STANDING_Y)
+    self.pos = (200, 200)
 
   """
     Method: on_enter
     Description: Method to be called when the sprite enters the game.
   """
   def on_enter(self):
-    self.alive = True
-    Clock.schedule_interval(self.check_life, 0)
-    Clock.schedule_interval(self.check_movement, 0)
+    print "ENTER MAIN CHARACTER"
+    self.on_battle, self.keyboard_on = False, True
 
   """
     Method: on_leave
     Description: Method to be called when the sprite exits the game.
   """
   def on_leave(self):
-    Clock.unschedule(self.check_life)
-    Clock.unschedule(self.check_movement)
+    print "LEAVE MAIN CHARACTER"
+    self.keyboard_on = False
+
+  def _keyboard_closed(self):
+    if self.alive and self.keyboard_on:
+      self._keyboard.unbind(on_key_down=self._on_keyboard_down)
+      self._keyboard.unbind(on_key_up=self._on_keyboard_up)
+      self._keyboard = None
+
+  def on_touch_down(self, touch):
+    if self.alive and self.keyboard_on:
+      return super(Character, self).on_touch_down(touch)
+
+  def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+    if self.alive and self.keyboard_on:
+      if self.on_battle:
+        if keycode[1] == "d":
+          self.moving, self.to_right = True, True
+        elif keycode[1] == "a":
+          self.moving, self.to_right = True, False
+      else:
+        if keycode[1] == "w":
+          self.jump()
+
+  def _on_keyboard_up(self, keyboard, keycode):
+    if self.alive and self.keyboard_on and self.on_battle:
+      if keycode[1] == "d":
+        self.moving = False
+      elif keycode[1] == "a":
+        self.moving = False
 
 
 #---------------------------------------------------------------------------------
