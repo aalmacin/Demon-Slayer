@@ -117,3 +117,7 @@ WC_FROGMAN_SPEED = 23
 AMBIENT_NIGHT_LOOP = "sounds/ambient_night_1.wav"
 THEME_INTRO_SOUND = "sounds/theme_song_intro.wav"
 THEME_LOOP = "sounds/theme_song_loop.wav"
+#special items
+HEART_IMG = "images/heart.png"
+CANDY_IMG = "images/candy.png"
+COIN_IMG = "images/coin.png"

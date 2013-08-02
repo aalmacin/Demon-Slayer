@@ -141,6 +141,7 @@ class Character(Image):
 
     self.life_meter = LifeMeter(max=max_life)
     self.add_widget(self.life_meter)
+    self.score = 0
 
     self.attack_dmg_dur = 0
     self.opp_attack_dmg_dur = 0
@@ -332,6 +333,7 @@ class MainCharacter(Character):
     self.on_battle = False
     self.source = self.sources[constants.STAND_RIGHT]
     self.size = self.texture_size
+    self.score = 0
 
 class GroundEnemy(Character):
   def __init__(self, sources, main_character, max_life, **kwargs):
@@ -446,6 +448,14 @@ class WeakEnemy(Image):
     self.attacking = False
     self.size = self.texture_size
 
+    self.heart = Heart(self.main_character)
+    self.coin = Coin(self.main_character)
+    self.candy = Candy(self.main_character)
+
+    self.add_widget(self.heart)
+    self.add_widget(self.coin)
+    self.add_widget(self.candy)
+
   def attack_player(self, dt):
     if self.main_character.alive:
       if self.attacking and not self.main_character.on_battle:
@@ -454,12 +464,22 @@ class WeakEnemy(Image):
         else:
           self.move_enemy()
 
+  def assign_item(self):
+    res = random.randint(0, 100)
+    if res >= 0 and res <= 70:
+      self.item = self.coin
+    elif res > 70 and res <= 90:
+      self.item = self.candy
+    else:
+      self.item = self.heart
+
   def damaged(self):
     if self.main_character.alive:
       self.source = self.damaged_img
       self.size = self.texture_size
       self.resetting = True
       self.x += 300
+      self.item.spit_out(self.x)
       Clock.schedule_once(self.reset_pend, 0.2)
 
   def check_collisions(self, dt):
@@ -489,6 +509,7 @@ class WeakEnemy(Image):
   def on_enter(self):
     self.source = self.the_source
     self.size = self.texture_size
+    self.assign_item()
     Clock.schedule_interval(self.check_collisions, 0.1)
     Clock.schedule_interval(self.attack_player, 0)
 
@@ -502,6 +523,7 @@ class WeakEnemy(Image):
       self.reset()
 
   def reset(self):
+    self.assign_item()
     self.x = constants.CHARACTER_STORAGE
     self.source = self.the_source
     self.size = self.texture_size
@@ -543,3 +565,52 @@ class LifeMeter(ProgressBar):
 
   def reset(self):
     self.value = self.max
+
+class SpecialItem(Image):
+  def __init__(self, main_character, **kwargs):
+    super(SpecialItem, self).__init__(**kwargs)
+    self.main_character = main_character
+    self.size = self.texture_size
+    Clock.schedule_interval(self.check_obtained, 0)
+    self.x = constants.CHARACTER_STORAGE
+    self.y = constants.STANDING_Y
+
+  def use_effect(self):
+    pass
+
+  def check_obtained(self, dt):
+    if self.collide_widget(self.main_character):
+      self.use_effect()
+      self.parent.reset()
+      self.x = constants.CHARACTER_STORAGE
+      self.y = constants.STANDING_Y
+
+  def spit_out(self, starting_x):
+    self.x = starting_x
+    anim = Animation(y=constants.JUMP_HEIGHT + 100, duration=0.5) + Animation(x=-self.width, duration=0.5)
+    anim.start(self)
+    def back_to_normal(dt):
+      self.x = constants.CHARACTER_STORAGE
+      self.y = constants.STANDING_Y
+    Clock.schedule_once(back_to_normal, 1)
+
+class Heart(SpecialItem):
+  def __init__(self, main_character, **kwargs):
+    super(Heart, self).__init__(main_character, source=constants.HEART_IMG, **kwargs)
+
+  def use_effect(self):
+    self.main_character.life_meter.value += 100
+
+class Candy(SpecialItem):
+  def __init__(self, main_character, **kwargs):
+    super(Candy, self).__init__(main_character, source=constants.CANDY_IMG, **kwargs)
+
+  def use_effect(self):
+    self.main_character.score += 100
+
+class Coin(SpecialItem):
+  def __init__(self, main_character, **kwargs):
+    super(Coin, self).__init__(main_character, source=constants.COIN_IMG, **kwargs)
+
+  def use_effect(self):
+    self.main_character.score += 10
