@@ -1,5 +1,6 @@
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
+from kivy.uix.image import Image
 from kivy.uix.progressbar import ProgressBar
 from kivy.core.window import Window
 from kivy.clock import Clock
@@ -41,19 +42,23 @@ class CharacterManager(Widget):
     self.difficulty = self.parent.parent.difficulty
     Clock.schedule_interval(self.check_collisions, 0)
 
+    self.main_character.on_enter()
+    self.scorer.reset()
+
   """
     Method: on_leave
     Description: Method to be called when the sprite exits the game.
   """
   def on_leave(self):
     Clock.unschedule(self.check_collisions)
+    self.main_character.on_leave()
 
   """
     Method: check_collisions
     Description: Method that checks for collisions.
   """
   def check_collisions(self, dt):
-    print dt
+    pass
 
 #---------------------------------------------------------------------------------
 
@@ -62,7 +67,7 @@ class CharacterManager(Widget):
   Description: A character that has life and can move around the screen.
     Has a life meter and various images for different action.
 """
-class Character(Widget):
+class Character(Image):
   alive = BooleanProperty(True)
   to_right = BooleanProperty(True)
   moving = BooleanProperty(True)
@@ -74,6 +79,9 @@ class Character(Widget):
     self.sources = sources
     self.life_meter = LifeMeter(max=max_life)
     self.add_widget(self.life_meter)
+    self.sources = sources
+    self.source = self.sources[constants.STAND_RIGHT]
+    self.size = self.texture_size
 
   """
     Method: on_enter
@@ -98,6 +106,7 @@ class Character(Widget):
     Description: Method that checks if the character is alive or dead.
   """
   def check_life(self, dt):
+    self.life_meter.pos = (self.x, self.y + self.height)
     if self.life_meter.value <= 0:
       self.alive = False
 
@@ -129,13 +138,6 @@ class Character(Widget):
       self.source = self.sources[key]
       self.size = self.texture_size
 
-  """
-    Method: check_collisions
-    Description: Checks if characters collide with each other.
-  """
-  def check_collisions(self, dt):
-    print dt
-
 #---------------------------------------------------------------------------------
 
 """
@@ -152,26 +154,7 @@ class MainCharacter(Character):
     self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
     self._keyboard.bind(on_key_down=self._on_keyboard_down)
     self._keyboard.bind(on_key_up=self._on_keyboard_up)
-    self.sources = sources
-    self.source = self.sources[constants.STAND_RIGHT]
     self.pos = (constants.MC_X, constants.STANDING_Y)
-    self.pos = (200, 200)
-
-  """
-    Method: on_enter
-    Description: Method to be called when the sprite enters the game.
-  """
-  def on_enter(self):
-    print "ENTER MAIN CHARACTER"
-    self.on_battle, self.keyboard_on = False, True
-
-  """
-    Method: on_leave
-    Description: Method to be called when the sprite exits the game.
-  """
-  def on_leave(self):
-    print "LEAVE MAIN CHARACTER"
-    self.keyboard_on = False
 
   def _keyboard_closed(self):
     if self.alive and self.keyboard_on:
@@ -201,6 +184,45 @@ class MainCharacter(Character):
       elif keycode[1] == "a":
         self.moving = False
 
+  def jump(self):
+    print "JUMP"
+
+  # OVERRIDEN METHODS
+  """
+    Method: on_enter
+    Description: Method to be called when the sprite enters the game.
+  """
+  def on_enter(self):
+    super(MainCharacter, self).on_enter()
+    self.on_battle, self.keyboard_on = False, True
+    Clock.schedule_interval(self.check_moving, 0)
+
+  """
+    Method: on_leave
+    Description: Method to be called when the sprite exits the game.
+  """
+  def on_leave(self):
+    super(MainCharacter, self).on_leave()
+    self.keyboard_on = False
+    Clock.unschedule(self.check_moving)
+
+  """
+    Method: check_movement_images
+    Description: Method that changes the source base on the movement variables.
+  """
+  def check_movement_images(self, dt):
+    if self.on_battle or not self.alive:
+      super(MainCharacter, self).check_movement_images(dt)
+    else:
+      self.change_src(constants.RUNNING_RIGHT)
+
+  """
+    Method: check_moving
+    Description: Method that checks if the character is moving. This moves the bg.
+  """
+  def check_moving(self, dt):
+    if not self.on_battle:
+      self.parent.parent.background.move_all()
 
 #---------------------------------------------------------------------------------
 
