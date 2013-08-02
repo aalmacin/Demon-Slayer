@@ -74,6 +74,7 @@ class Character(Image):
   moving = BooleanProperty(True)
   jumping = BooleanProperty(False)
   attacking = BooleanProperty(False)
+  hit = BooleanProperty(False)
   """
     Constructor
   """
@@ -130,12 +131,22 @@ class Character(Image):
     Description: Method used to make the character attack.
   """
   def attack(self):
-    if not self.attacking and self.alive:
+    if not self.attacking and not self.hit and self.alive:
       if self.to_right:
         self.change_src(constants.STAND_ATTACK_RIGHT)
       else:
         self.change_src(constants.STAND_ATTACK_LEFT)
       self.attacking = True
+      Clock.schedule_once(self.change_back, 0.3)
+
+  """
+    Method: damaged
+    Description: Method used to make the character looked like attacked.
+  """
+  def damaged(self):
+    if not self.attacking and not self.hit and self.alive:
+      self.change_src(constants.DAMAGED)
+      self.hit = True
       Clock.schedule_once(self.change_back, 0.3)
 
   """
@@ -148,6 +159,7 @@ class Character(Image):
     else:
       self.change_src(constants.STAND_LEFT)
     self.attacking = False
+    self.hit = False
 
   """
     Method: jump
@@ -169,7 +181,7 @@ class Character(Image):
     Description: Method that changes the source base on the movement variables.
   """
   def check_movement_images(self, dt):
-    if self.alive and not self.attacking:
+    if not self.attacking and not self.hit and self.alive:
       if to_right:
         if moving:
           self.change_src(constants.RUNNING_RIGHT)
@@ -264,7 +276,7 @@ class MainCharacter(Character):
     Description: Method that changes the source base on the movement variables.
   """
   def check_movement_images(self, dt):
-    if not self.attacking:
+    if not self.attacking and not self.hit:
       if self.on_battle or not self.alive:
         super(MainCharacter, self).check_movement_images(dt)
       else:
@@ -288,6 +300,7 @@ class MainCharacter(Character):
     else:
       self.change_src(constants.RUNNING_RIGHT)
     self.attacking = False
+    self.hit = False
 
 #---------------------------------------------------------------------------------
 
