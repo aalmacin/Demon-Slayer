@@ -2,6 +2,7 @@ from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 from kivy.uix.image import Image
 from kivy.uix.progressbar import ProgressBar
+from kivy.animation import Animation
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.properties import *
@@ -71,6 +72,7 @@ class Character(Image):
   alive = BooleanProperty(True)
   to_right = BooleanProperty(True)
   moving = BooleanProperty(True)
+  jumping = BooleanProperty(False)
   """
     Constructor
   """
@@ -82,16 +84,18 @@ class Character(Image):
     self.sources = sources
     self.source = self.sources[constants.STAND_RIGHT]
     self.size = self.texture_size
+    self.life_meter.pos = (self.x, self.y + self.height)
 
   """
     Method: on_enter
     Description: Method to be called when the sprite enters the game.
   """
   def on_enter(self):
-    self.alive, self.to_right, self.moving = True, True, True
+    self.alive, self.to_right, self.moving, self.jumping = True, True, True, False
     self.life_meter.reset()
     Clock.schedule_interval(self.check_life, 0)
     Clock.schedule_interval(self.check_movement_images, 0)
+    Clock.schedule_interval(self.check_jumping, 0)
 
   """
     Method: on_leave
@@ -100,6 +104,7 @@ class Character(Image):
   def on_leave(self):
     Clock.unschedule(self.check_life)
     Clock.unschedule(self.check_movement_images)
+    Clock.unschedule(self.check_jumping)
 
   """
     Method: check_life
@@ -109,6 +114,31 @@ class Character(Image):
     self.life_meter.pos = (self.x, self.y + self.height)
     if self.life_meter.value <= 0:
       self.alive = False
+
+  """
+    Method: check_jumping
+    Description: Method that checks if the character is jumping.
+  """
+  def check_jumping(self, dt):
+    if self.y != constants.STANDING_Y:
+      self.jumping = True
+    else:
+      self.jumping = False
+
+  """
+    Method: jump
+    Description: Method used to make the character jump.
+  """
+  def jump(self):
+    if not self.jumping:
+      anim = Animation(
+        y=constants.JUMP_HEIGHT,
+        duration=constants.JUMP_DURATION
+      ) + Animation(
+        y=constants.STANDING_Y,
+        duration=constants.JUMP_DURATION
+      )
+      anim.start(self)
 
   """
     Method: check_movement_images
@@ -183,9 +213,6 @@ class MainCharacter(Character):
         self.moving = False
       elif keycode[1] == "a":
         self.moving = False
-
-  def jump(self):
-    print "JUMP"
 
   # OVERRIDEN METHODS
   """
