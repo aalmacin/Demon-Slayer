@@ -73,6 +73,7 @@ class Character(Image):
   to_right = BooleanProperty(True)
   moving = BooleanProperty(True)
   jumping = BooleanProperty(False)
+  attacking = BooleanProperty(False)
   """
     Constructor
   """
@@ -82,16 +83,15 @@ class Character(Image):
     self.life_meter = LifeMeter(max=max_life)
     self.add_widget(self.life_meter)
     self.sources = sources
-    self.source = self.sources[constants.STAND_RIGHT]
-    self.size = self.texture_size
-    self.life_meter.pos = (self.x, self.y + self.height)
+    self.change_src(constants.STAND_RIGHT)
+    self.life_meter.pos = (self.x, self.y + self.height + 100)
 
   """
     Method: on_enter
     Description: Method to be called when the sprite enters the game.
   """
   def on_enter(self):
-    self.alive, self.to_right, self.moving, self.jumping = True, True, True, False
+    self.alive, self.to_right, self.moving, self.jumping, self.attacking  = True, True, True, False, False
     self.life_meter.reset()
     Clock.schedule_interval(self.check_life, 0)
     Clock.schedule_interval(self.check_movement_images, 0)
@@ -116,14 +116,38 @@ class Character(Image):
       self.alive = False
 
   """
-    Method: check_jumping
-    Description: Method that checks if the character is jumping.
+    method: check_jumping
+    description: method that checks if the character is jumping.
   """
   def check_jumping(self, dt):
     if self.y != constants.STANDING_Y:
       self.jumping = True
     else:
       self.jumping = False
+
+  """
+    Method: attack
+    Description: Method used to make the character attack.
+  """
+  def attack(self):
+    if not self.attacking and self.alive:
+      if self.to_right:
+        self.change_src(constants.STAND_ATTACK_RIGHT)
+      else:
+        self.change_src(constants.STAND_ATTACK_LEFT)
+      self.attacking = True
+      Clock.schedule_once(self.change_back, 0.3)
+
+  """
+    Method: change_back
+    Description: Changes the character back to its proper image.
+  """
+  def change_back(self, dt):
+    if self.to_right:
+      self.change_src(constants.STAND_RIGHT)
+    else:
+      self.change_src(constants.STAND_LEFT)
+    self.attacking = False
 
   """
     Method: jump
@@ -145,7 +169,7 @@ class Character(Image):
     Description: Method that changes the source base on the movement variables.
   """
   def check_movement_images(self, dt):
-    if self.alive:
+    if self.alive and not self.attacking:
       if to_right:
         if moving:
           self.change_src(constants.RUNNING_RIGHT)
@@ -179,6 +203,7 @@ class MainCharacter(Character):
     Constructor
   """
   keyboard_on = BooleanProperty(False)
+  on_battle = BooleanProperty(False)
   def __init__(self, sources, max_life, **kwargs):
     super(MainCharacter, self).__init__(sources, max_life, **kwargs)
     self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
@@ -193,7 +218,8 @@ class MainCharacter(Character):
       self._keyboard = None
 
   def on_touch_down(self, touch):
-    if self.alive and self.keyboard_on:
+    if self.alive:
+      self.attack()
       return super(Character, self).on_touch_down(touch)
 
   def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
@@ -238,10 +264,11 @@ class MainCharacter(Character):
     Description: Method that changes the source base on the movement variables.
   """
   def check_movement_images(self, dt):
-    if self.on_battle or not self.alive:
-      super(MainCharacter, self).check_movement_images(dt)
-    else:
-      self.change_src(constants.RUNNING_RIGHT)
+    if not self.attacking:
+      if self.on_battle or not self.alive:
+        super(MainCharacter, self).check_movement_images(dt)
+      else:
+        self.change_src(constants.RUNNING_RIGHT)
 
   """
     Method: check_moving
@@ -250,6 +277,17 @@ class MainCharacter(Character):
   def check_moving(self, dt):
     if not self.on_battle:
       self.parent.parent.background.move_all()
+
+  """
+    Method: change_back
+    Description: Changes the character back to its proper image.
+  """
+  def change_back(self, dt):
+    if self.on_battle:
+      super(MainCharacter, self).change_back(dt)
+    else:
+      self.change_src(constants.RUNNING_RIGHT)
+    self.attacking = False
 
 #---------------------------------------------------------------------------------
 
