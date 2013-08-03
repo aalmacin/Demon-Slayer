@@ -649,7 +649,7 @@ class SpecialItem(Image):
     Description: Move the item closer to the main character
   """
   def start_running(self, dt):
-    if self.run:
+    if self.run and self.main_character.alive:
       self.x -= constants.WC_ROCK_SPEED
 
   """

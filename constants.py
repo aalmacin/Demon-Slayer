@@ -125,6 +125,6 @@ HEART_COUNT = 5
 CANDY_COUNT = 20
 COIN_COUNT = 80
 #positions
-SCORER_POS = (100, 610)
+SCORER_POS = (170, 610)
 #Strings
 SCORE_TEXT = "Score: "
