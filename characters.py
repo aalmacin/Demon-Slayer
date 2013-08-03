@@ -185,6 +185,20 @@ class CharacterManager(Widget):
           item.use_effect()
           item.reset()
 
+      # When the main character collides with the boss
+      if self.main_character.collide_widget(self.horseman):
+        if not self.main_character.attacking and not self.main_character.attacking:
+          if self.horseman.x > self.main_character.x + (self.main_character.width / 2):
+            if self.main_character.x + self.main_character.width < (constants.WIDTH - self.width):
+              self.horseman.x = self.main_character.x + self.main_character.width
+            else:
+              self.main_character.x = self.horseman.x - self.main_character.width
+          else:
+            if self.main_character.x - self.horseman.width > constants.MIN_X:
+              self.horseman.x = self.main_character.x - self.horseman.width
+            else:
+              self.main_character.x = self.horseman.x + self.horseman.width
+
   """
     Method: control_weak_enemies
     Description: Method that controls all weak enemies.
@@ -241,6 +255,7 @@ class Character(Image):
   jumping = BooleanProperty(False)
   attacking = BooleanProperty(False)
   hit = BooleanProperty(False)
+  on_battle = BooleanProperty(False)
   """
     Constructor
   """
@@ -258,11 +273,12 @@ class Character(Image):
     Description: Method to be called when the widget enters the game.
   """
   def on_enter(self):
-    self.alive, self.to_right, self.moving, self.jumping, self.attacking  = True, True, True, False, False
+    self.alive, self.to_right, self.moving, self.jumping, self.attacking, self.on_battle = True, True, True, False, False, False
     self.life_meter.reset()
     Clock.schedule_interval(self.check_life, 0)
     Clock.schedule_interval(self.check_movement_images, 0)
     Clock.schedule_interval(self.check_jumping, 0)
+    Clock.schedule_interval(self.move_character, 0)
 
   """
     Method: on_leave
@@ -272,6 +288,7 @@ class Character(Image):
     Clock.unschedule(self.check_life)
     Clock.unschedule(self.check_movement_images)
     Clock.unschedule(self.check_jumping)
+    Clock.unschedule(self.move_character)
 
   """
     Method: check_life
@@ -343,6 +360,17 @@ class Character(Image):
       anim.start(self)
 
   """
+    Method: move_character
+    Description: Moves the character based on its moving values
+  """
+  def move_character(self, dt):
+    if not self.attacking and not self.hit and self.alive and self.moving and self.on_battle:
+      if self.to_right and self.x < (constants.WIDTH - self.width):
+        self.x += constants.RUNNING_SPEED
+      if not self.to_right and self.x > constants.MIN_X:
+        self.x -= constants.RUNNING_SPEED
+
+  """
     Method: check_movement_images
     Description: Method that changes the source base on the movement variables.
   """
@@ -381,7 +409,6 @@ class MainCharacter(Character):
     Constructor
   """
   keyboard_on = BooleanProperty(False)
-  on_battle = BooleanProperty(False)
   def __init__(self, sources, max_life, **kwargs):
     super(MainCharacter, self).__init__(sources, max_life, **kwargs)
     self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
@@ -419,9 +446,8 @@ class MainCharacter(Character):
           self.moving, self.to_right = True, True
         elif keycode[1] == "a":
           self.moving, self.to_right = True, False
-      else:
-        if keycode[1] == "w":
-          self.jump()
+      if keycode[1] == "w":
+        self.jump()
 
   """
     Method: on_keyboard_up
@@ -441,7 +467,7 @@ class MainCharacter(Character):
   """
   def on_enter(self):
     super(MainCharacter, self).on_enter()
-    self.on_battle, self.keyboard_on = False, True
+    self.keyboard_on = True
     Clock.schedule_interval(self.check_moving, 0)
 
   """
@@ -504,7 +530,6 @@ class BossCharacter(Character):
   """
     CONSTRUCTOR
   """
-  activated = BooleanProperty(False)
   def __init__(self, sources, max_life, **kwargs):
     super(BossCharacter, self).__init__(sources, max_life, **kwargs)
     self.pos = (constants.CHARACTER_STORAGE, constants.STANDING_Y)
@@ -519,10 +544,11 @@ class BossCharacter(Character):
     def change_back(dt):
       self.to_right = False
       self.moving = False
+      self.on_battle = True
     Clock.schedule_once(change_back, 1)
 
   def decide_actions(self, dt):
-    if self.alive and self.activated:
+    if self.alive and self.on_battle and not self.hit and not self.attacking:
       print "DECIDE"
 
   """
@@ -534,6 +560,7 @@ class BossCharacter(Character):
     Clock.schedule_interval(self.decide_actions, 0.5)
     self.pos = (constants.CHARACTER_STORAGE, constants.STANDING_Y)
     self.to_right = False
+    self.on_battle = False
 
   """
     Method: on_leave
