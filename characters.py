@@ -199,6 +199,10 @@ class CharacterManager(Widget):
           else:
             self.main_character.x = self.horseman.x + self.horseman.width
 
+        if not self.horseman.attacking:
+          self.horseman.to_right = not self.main_character.to_right
+          self.horseman.attack()
+
         # Make the attacks happen
         if self.main_character.attacking and not self.horseman.hit:
           self.horseman.damaged()
@@ -559,7 +563,17 @@ class BossCharacter(Character):
 
   def decide_actions(self, dt):
     if self.alive and self.on_battle and not self.hit and not self.attacking:
-      print "DECIDE"
+      res = random.randint(0, 3)
+      if res == 0:
+        self.to_right = True
+        self.moving = True
+      elif res == 1:
+        self.to_right = False
+        self.moving = True
+      elif res == 2:
+        self.jump()
+      elif res == 3:
+        self.moving = False
 
   """
     Method: on_enter
