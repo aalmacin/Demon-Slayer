@@ -54,37 +54,41 @@ class CharacterManager(Widget):
   """
   def create_weak_enemies(self):
     self.weak_enemies = []
-    for i in range(0, constants.ENEMY_MAX):
-      res = random.randint(0, 2)
-      if res == 0:
-        weak_enemy = WeakEnemy(
-          constants.WC_ROCK,
-          constants.WC_ROCK_IMAGE_DMG,
-          constants.WC_ROCK_DMG,
-          constants.WC_ROCK_SPEED
-        )
-      elif res == 1:
-        weak_enemy = WeakEnemy(
-          constants.WC_PLAYFULL_GIRL,
-          constants.WC_PLAYFULL_GIRL_IMAGE_DMG,
-          constants.WC_PLAYFULL_GIRL_DMG,
-          constants.WC_PLAYFULL_GIRL_SPEED,
-          normal_sounds=[constants.WC_PLAYFULL_GIRL_YELL_SOUND_1, constants.WC_PLAYFULL_GIRL_YELL_SOUND_2],
-          die_sounds=constants.WC_PLAYFULL_GIRL_DIE_SOUND,
-          jumper=True
-        )
-      elif res == 2:
-        weak_enemy = WeakEnemy(
-          constants.WC_FROGMAN,
-          constants.WC_FROGMAN_IMAGE_DMG,
-          constants.WC_FROGMAN_DMG,
-          constants.WC_FROGMAN_SPEED,
-          normal_sounds=[constants.WC_FROGMAN_YELL_SOUND_1, constants.WC_FROGMAN_YELL_SOUND_2],
-          die_sounds=constants.WC_FROGMAN_DIE_SOUND,
-          jumper=True
-        )
-      self.weak_enemies.append(weak_enemy)
-      self.add_widget(weak_enemy)
+    for i in range(0, constants.ROCK_COUNT):
+      rock = WeakEnemy(
+        constants.WC_ROCK,
+        constants.WC_ROCK_IMAGE_DMG,
+        constants.WC_ROCK_DMG,
+        constants.WC_ROCK_SPEED
+      )
+      self.weak_enemies.append(rock)
+      self.add_widget(rock)
+
+    for i in range(0, constants.PLAYFULL_GIRL_COUNT):
+      playfull_girl = WeakEnemy(
+        constants.WC_PLAYFULL_GIRL,
+        constants.WC_PLAYFULL_GIRL_IMAGE_DMG,
+        constants.WC_PLAYFULL_GIRL_DMG,
+        constants.WC_PLAYFULL_GIRL_SPEED,
+        normal_sounds=[constants.WC_PLAYFULL_GIRL_YELL_SOUND_1, constants.WC_PLAYFULL_GIRL_YELL_SOUND_2],
+        die_sounds=constants.WC_PLAYFULL_GIRL_DIE_SOUND,
+        jumper=True
+      )
+      self.weak_enemies.append(playfull_girl)
+      self.add_widget(playfull_girl)
+
+    for i in range(0, constants.FROGMAN_COUNT):
+      frogman = WeakEnemy(
+        constants.WC_FROGMAN,
+        constants.WC_FROGMAN_IMAGE_DMG,
+        constants.WC_FROGMAN_DMG,
+        constants.WC_FROGMAN_SPEED,
+        normal_sounds=[constants.WC_FROGMAN_YELL_SOUND_1, constants.WC_FROGMAN_YELL_SOUND_2],
+        die_sounds=constants.WC_FROGMAN_DIE_SOUND,
+        jumper=True
+      )
+      self.weak_enemies.append(frogman)
+      self.add_widget(frogman)
 
   """
     Method: create_special_items
