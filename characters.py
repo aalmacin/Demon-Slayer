@@ -29,10 +29,36 @@ class CharacterManager(Widget):
     self.create_main_character()
     self.create_weak_enemies()
     self.create_special_items()
+    self.create_sounds()
 
+  """
+    Method: create_sounds
+    Description: Method that creates all the sounds used by the game.
+  """
+  def create_sounds(self):
     self.weak_enemies_attack = 0
     self.sound = SoundLoader.load(constants.AMBIENT_NIGHT_LOOP)
     self.boss_sound = SoundLoader.load(constants.THEME_LOOP)
+    self.main_character_taunt_sounds = [
+      SoundLoader.load(constants.MC_TAUNT_SOUND_1),
+      SoundLoader.load(constants.MC_TAUNT_SOUND_2),
+      SoundLoader.load(constants.MC_TAUNT_SOUND_3)
+    ]
+    self.main_character_die_sound = SoundLoader.load(constants.MC_DIE_SOUND)
+    self.horseman_taunt_sounds = [
+      SoundLoader.load(constants.MC_TAUNT_SOUND_1),
+      SoundLoader.load(constants.MC_TAUNT_SOUND_2),
+      SoundLoader.load(constants.MC_TAUNT_SOUND_3)
+    ]
+    self.horseman_taunt_sounds = [
+      SoundLoader.load(constants.HM_TAUNT_SOUND_1),
+      SoundLoader.load(constants.HM_TAUNT_SOUND_2)
+    ]
+    self.horseman_die_sounds = [
+      SoundLoader.load(constants.HM_DIE_SOUND_1),
+      SoundLoader.load(constants.HM_DIE_SOUND_2),
+      SoundLoader.load(constants.HM_DIE_SOUND_3)
+    ]
     self.current_sound = self.sound
 
   """
@@ -200,6 +226,7 @@ class CharacterManager(Widget):
             weak_enemy.reset()
             self.main_character.life_meter.decrease_life(weak_enemy.dmg)
             self.main_character.damaged()
+            self.main_character_die_sound.play()
       for item in self.special_items:
         if self.main_character.collide_widget(item):
           item.use_effect()
@@ -226,10 +253,14 @@ class CharacterManager(Widget):
         # Make the attacks happen
         if self.main_character.attacking and not self.horseman.hit:
           self.horseman.damaged()
+          random.choice(self.horseman_die_sounds).play()
+          random.choice(self.main_character_taunt_sounds).play()
           self.horseman.life_meter.decrease_life(constants.MAIN_CHAR_HIT_DMG / self.difficulty)
 
         if self.horseman.attacking and not self.main_character.hit:
           self.main_character.damaged()
+          self.main_character_die_sound.play()
+          random.choice(self.horseman_taunt_sounds).play()
           self.main_character.life_meter.decrease_life(constants.HIT_DMG * self.difficulty)
 
   """

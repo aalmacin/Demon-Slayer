@@ -39,8 +39,7 @@ MC_LIFE_MAX = 300
 MC_TAUNT_SOUND_1 = "sounds/Katipunero_taunt_1.wav"
 MC_TAUNT_SOUND_2 = "sounds/Katipunero_taunt_2.wav"
 MC_TAUNT_SOUND_3 = "sounds/Katipunero_taunt_3.wav"
-MC_DIE_SOUND_1 = "sounds/Katipunero_die_1.wav"
-MC_DIE_SOUND_2 = "sounds/Katipunero_die_2.wav"
+MC_DIE_SOUND = "sounds/Katipunero_die_1.wav"
 #Horseman/Tikbalang character values
 HM_RUNNING_LEFT = "images/TikbalangRunningLeft.zip"
 HM_RUNNING_RIGHT = "images/TikbalangRunningRight.zip"
