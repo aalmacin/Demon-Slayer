@@ -187,17 +187,26 @@ class CharacterManager(Widget):
 
       # When the main character collides with the boss
       if self.main_character.collide_widget(self.horseman):
-        if not self.main_character.attacking and not self.main_character.attacking:
-          if self.horseman.x > self.main_character.x + (self.main_character.width / 2):
-            if self.main_character.x + self.main_character.width < (constants.WIDTH - self.width):
-              self.horseman.x = self.main_character.x + self.main_character.width
-            else:
-              self.main_character.x = self.horseman.x - self.main_character.width
+        # Make sure the images dont overlap each other
+        if self.horseman.x > self.main_character.x + (self.main_character.width / 2):
+          if self.main_character.x + self.main_character.width < (constants.WIDTH - self.width):
+            self.horseman.x = self.main_character.x + self.main_character.width
           else:
-            if self.main_character.x - self.horseman.width > constants.MIN_X:
-              self.horseman.x = self.main_character.x - self.horseman.width
-            else:
-              self.main_character.x = self.horseman.x + self.horseman.width
+            self.main_character.x = self.horseman.x - self.main_character.width
+        else:
+          if self.main_character.x - self.horseman.width > constants.MIN_X:
+            self.horseman.x = self.main_character.x - self.horseman.width
+          else:
+            self.main_character.x = self.horseman.x + self.horseman.width
+
+        # Make the attacks happen
+        if self.main_character.attacking and not self.horseman.hit:
+          self.horseman.damaged()
+          self.horseman.life_meter.decrease_life(constants.MAIN_CHAR_HIT_DMG / self.difficulty)
+
+        if self.horseman.attacking and not self.main_character.hit:
+          self.main_character.damaged()
+          self.main_character.life_meter.decrease_life(constants.HIT_DMG * self.difficulty)
 
   """
     Method: control_weak_enemies
@@ -386,7 +395,7 @@ class Character(Image):
           self.change_src(constants.RUNNING_LEFT)
         else:
           self.change_src(constants.STAND_LEFT)
-    else:
+    if not self.alive:
       self.change_src(constants.DEAD)
 
   """
@@ -469,6 +478,7 @@ class MainCharacter(Character):
     super(MainCharacter, self).on_enter()
     self.keyboard_on = True
     Clock.schedule_interval(self.check_moving, 0)
+    self.pos = (constants.MC_X, constants.STANDING_Y)
 
   """
     Method: on_leave
@@ -567,8 +577,19 @@ class BossCharacter(Character):
     Description: Method to be called when the widget exits the game.
   """
   def on_leave(self):
-    super(MainCharacter, self).on_leave()
-    Clock.unschedule(decide_actions)
+    super(BossCharacter, self).on_leave()
+    Clock.unschedule(self.decide_actions)
+
+  """
+    Method: check_life
+    Description: Method that checks if the character is alive or dead.
+  """
+  def check_life(self, dt):
+    super(BossCharacter, self).check_life(dt)
+    if not self.alive:
+      def move_to_game_over(dt):
+        App.get_running_app().root.current = constants.GAME_OVER_SCREEN
+      Clock.schedule_once(move_to_game_over, 2)
 
 #---------------------------------------------------------------------------------
 
