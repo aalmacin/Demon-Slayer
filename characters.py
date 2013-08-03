@@ -17,7 +17,7 @@ class CharacterManager(Widget):
   """
     Constructor
   """
-  difficulty = NumericProperty(-1)
+  difficulty = NumericProperty(1)
   def __init__(self, **kwargs):
     super(CharacterManager, self).__init__(**kwargs)
     self.scorer = Scorer()
@@ -26,6 +26,8 @@ class CharacterManager(Widget):
 
     self.create_main_character()
     self.create_weak_enemies()
+
+    self.weak_enemies_attack = 0
 
   """
     Method: create_main_character
@@ -57,14 +59,14 @@ class CharacterManager(Widget):
         weak_enemy = WeakEnemy(
           constants.WC_ROCK,
           constants.WC_ROCK_IMAGE_DMG,
-          constants.WC_ROCK_DMG * self.difficulty,
+          constants.WC_ROCK_DMG,
           constants.WC_ROCK_SPEED
         )
       elif res == 1:
         weak_enemy = WeakEnemy(
           constants.WC_PLAYFULL_GIRL,
           constants.WC_PLAYFULL_GIRL_IMAGE_DMG,
-          constants.WC_PLAYFULL_GIRL_DMG * self.difficulty,
+          constants.WC_PLAYFULL_GIRL_DMG,
           constants.WC_PLAYFULL_GIRL_SPEED,
           normal_sounds=[constants.WC_PLAYFULL_GIRL_YELL_SOUND_1, constants.WC_PLAYFULL_GIRL_YELL_SOUND_2],
           die_sounds=constants.WC_PLAYFULL_GIRL_DIE_SOUND,
@@ -74,7 +76,7 @@ class CharacterManager(Widget):
         weak_enemy = WeakEnemy(
           constants.WC_FROGMAN,
           constants.WC_FROGMAN_IMAGE_DMG,
-          constants.WC_FROGMAN_DMG * self.difficulty,
+          constants.WC_FROGMAN_DMG,
           constants.WC_FROGMAN_SPEED,
           normal_sounds=[constants.WC_FROGMAN_YELL_SOUND_1, constants.WC_FROGMAN_YELL_SOUND_2],
           die_sounds=constants.WC_FROGMAN_DIE_SOUND,
@@ -91,6 +93,7 @@ class CharacterManager(Widget):
     self.difficulty = self.parent.parent.difficulty
     Clock.schedule_interval(self.check_collisions, 0)
     Clock.schedule_interval(self.control_weak_enemies, 0.5)
+    self.weak_enemies_attack = 0
 
     self.main_character.on_enter()
     for weak_enemy in self.weak_enemies:
@@ -113,7 +116,14 @@ class CharacterManager(Widget):
     Description: Method that checks for collisions.
   """
   def check_collisions(self, dt):
-    pass
+    if self.main_character.alive:
+      for weak_enemy in self.weak_enemies:
+        if self.main_character.collide_widget(weak_enemy):
+          if self.main_character.attacking:
+            weak_enemy.damaged()
+          else:
+            self.main_character.life_meter.decrease_life(weak_enemy.dmg)
+            weak_enemy.reset()
 
   """
     Method: control_weak_enemies
@@ -124,7 +134,7 @@ class CharacterManager(Widget):
     if res:
       weak_enemy = random.choice(self.weak_enemies)
       weak_enemy.run = True
-
+      self.weak_enemies_attack += 1
 
 #---------------------------------------------------------------------------------
 
@@ -368,7 +378,7 @@ class MainCharacter(Character):
     Description: Method that checks if the character is moving. This moves the bg.
   """
   def check_moving(self, dt):
-    if not self.on_battle:
+    if not self.on_battle and self.alive:
       self.parent.parent.background.move_all()
 
   """
@@ -382,6 +392,17 @@ class MainCharacter(Character):
       self.change_src(constants.RUNNING_RIGHT)
     self.attacking = False
     self.hit = False
+
+  """
+    Method: check_life
+    Description: Method that checks if the character is alive or dead.
+  """
+  def check_life(self, dt):
+    super(MainCharacter, self).check_life(dt)
+    if not self.alive:
+      def move_to_game_over(dt):
+        App.get_running_app().root.current = constants.GAME_OVER_SCREEN
+      Clock.schedule_once(move_to_game_over, 2)
 
 #---------------------------------------------------------------------------------
 
@@ -473,7 +494,10 @@ class WeakEnemy(Image):
     self.size = self.texture_size
     anim = Animation(x=self.x + 200, duration=0.3)
     anim.start(self)
-    Clock.schedule_once(self.reset, 0.3)
+    self.run = False
+    def reset_pend(dt):
+      self.reset()
+    Clock.schedule_once(reset_pend, 0.4)
 
   """
     Method: start_running
@@ -536,6 +560,7 @@ class WeakEnemy(Image):
     self.source = self.the_source
     self.size = self.texture_size
     self.run = False
+    self.dmg *= self.parent.difficulty
     Clock.schedule_interval(self.start_running, 0)
     Clock.schedule_interval(self.check_jumping, 0)
 
@@ -553,6 +578,8 @@ class WeakEnemy(Image):
     Description: Sends the weak enemy back to its storage.
   """
   def reset(self):
-    self.pos = (constants.CHARACTER_STORAGE, constants.STANDING_Y)
     self.run = False
+    self.pos = (constants.CHARACTER_STORAGE, constants.STANDING_Y)
+    self.source = self.the_source
+    self.size = self.texture_size
 #---------------------------------------------------------------------------------

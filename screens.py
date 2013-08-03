@@ -21,7 +21,7 @@ class MainScreen(Screen):
     #self.background.on_enter()
 
   def on_leave(self):
-    self.character_manager.reset()
+    self.character_manager.on_leave()
     self.background.reset()
 
 class StartScreen(Screen):
