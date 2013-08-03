@@ -121,6 +121,9 @@ THEME_LOOP = "sounds/theme_song_loop.wav"
 HEART_IMG = "images/heart.png"
 CANDY_IMG = "images/candy.png"
 COIN_IMG = "images/coin.png"
+HEART_COUNT = 5
+CANDY_COUNT = 20
+COIN_COUNT = 80
 #positions
 SCORER_POS = (100, 610)
 #Strings

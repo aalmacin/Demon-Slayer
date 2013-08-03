@@ -26,6 +26,7 @@ class CharacterManager(Widget):
 
     self.create_main_character()
     self.create_weak_enemies()
+    self.create_special_items()
 
     self.weak_enemies_attack = 0
 
@@ -86,6 +87,25 @@ class CharacterManager(Widget):
       self.add_widget(weak_enemy)
 
   """
+    Method: create_special_items
+    Description: Method called to create the special items.
+  """
+  def create_special_items(self):
+    self.special_items = []
+    for i in range(0, constants.HEART_COUNT):
+      heart = Heart(self.main_character)
+      self.special_items.append(heart)
+      self.add_widget(heart)
+    for i in range(0, constants.CANDY_COUNT):
+      candy = Candy(self.main_character)
+      self.special_items.append(candy)
+      self.add_widget(candy)
+    for i in range(0, constants.COIN_COUNT):
+      coin = Coin(self.main_character)
+      self.special_items.append(coin)
+      self.add_widget(coin)
+
+  """
     Method: on_enter
     Description: Method to be called when the widget enters the game.
   """
@@ -93,12 +113,15 @@ class CharacterManager(Widget):
     self.difficulty = self.parent.parent.difficulty
     Clock.schedule_interval(self.check_collisions, 0)
     Clock.schedule_interval(self.control_weak_enemies, 0.5)
+    Clock.schedule_interval(self.control_items, 0.3)
     self.weak_enemies_attack = 0
 
     self.main_character.on_enter()
     for weak_enemy in self.weak_enemies:
       weak_enemy.on_enter()
     self.scorer.reset()
+    for item in self.special_items:
+      item.on_enter()
 
   """
     Method: on_leave
@@ -107,9 +130,12 @@ class CharacterManager(Widget):
   def on_leave(self):
     Clock.unschedule(self.check_collisions)
     Clock.unschedule(self.control_weak_enemies)
+    Clock.unschedule(self.control_items)
     self.main_character.on_leave()
     for weak_enemy in self.weak_enemies:
       weak_enemy.on_leave()
+    for item in self.special_items:
+      item.on_leave()
 
   """
     Method: check_collisions
@@ -127,7 +153,7 @@ class CharacterManager(Widget):
 
   """
     Method: control_weak_enemies
-    Description: Method that controls all characters.
+    Description: Method that controls all weak enemies.
   """
   def control_weak_enemies(self, dt):
     res = random.randint(0,1)
@@ -135,6 +161,16 @@ class CharacterManager(Widget):
       weak_enemy = random.choice(self.weak_enemies)
       weak_enemy.run = True
       self.weak_enemies_attack += 1
+
+  """
+    Method: control_items
+    Description: Method that controls all items.
+  """
+  def control_items(self, dt):
+    res = random.randint(0,1)
+    if res:
+      item = random.choice(self.special_items)
+      item.run = True
 
 #---------------------------------------------------------------------------------
 
@@ -583,3 +619,80 @@ class WeakEnemy(Image):
     self.source = self.the_source
     self.size = self.texture_size
 #---------------------------------------------------------------------------------
+"""
+  Class: SpecialItem
+  Description: Special Item that helps the user.
+"""
+class SpecialItem(Image):
+  """
+    CONSTRUCTOR
+  """
+  def __init__(self, main_character, **kwargs):
+    super(SpecialItem, self).__init__(**kwargs)
+    self.main_character = main_character
+    self.size = self.texture_size
+    self.pos = (constants.CHARACTER_STORAGE, constants.STANDING_Y)
+
+  """
+    Method: use_effect
+    Description: Use the effect of the special item.
+  """
+  def use_effect(self):
+    pass
+
+  """
+    Method: start_running
+    Description: Move the item closer to the main character
+  """
+  def start_running(self, dt):
+    if self.run:
+      self.x -= constants.WC_ROCK_SPEED
+
+  """
+    Method: on_enter
+    Description: Method to be called when the widget enters the game.
+  """
+  def on_enter(self):
+    self.reset()
+    Clock.schedule_interval(self.start_running, 0)
+
+  """
+    Method: on_leave
+    Description: Method to be called when the widget exits the game.
+  """
+  def on_leave(self):
+    Clock.unschedule(self.start_running)
+
+  """
+    Method: reset
+    Description: Sends the item back to its storage.
+  """
+  def reset(self):
+    up = random.randint(0, 1)
+    if up:
+      self.y = constants.STANDING_Y
+    else:
+      self.y = constants.JUMP_HEIGHT - 10
+    self.x = constants.CHARACTER_STORAGE
+    self.run = False
+
+class Heart(SpecialItem):
+  def __init__(self, main_character, **kwargs):
+    super(Heart, self).__init__(main_character, source=constants.HEART_IMG, **kwargs)
+
+  def use_effect(self):
+    self.main_character.life_meter.value += 100
+
+class Candy(SpecialItem):
+  def __init__(self, main_character, **kwargs):
+    super(Candy, self).__init__(main_character, source=constants.CANDY_IMG, **kwargs)
+
+  def use_effect(self):
+    self.main_character.score += 100
+
+class Coin(SpecialItem):
+  def __init__(self, main_character, **kwargs):
+    super(Coin, self).__init__(main_character, source=constants.COIN_IMG, **kwargs)
+
+  def use_effect(self):
+    self.main_character.score += 10
