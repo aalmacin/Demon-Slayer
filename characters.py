@@ -150,6 +150,10 @@ class CharacterManager(Widget):
           else:
             self.main_character.life_meter.decrease_life(weak_enemy.dmg)
             weak_enemy.reset()
+      for item in self.special_items:
+        if self.main_character.collide_widget(item):
+          item.use_effect()
+          item.reset()
 
   """
     Method: control_weak_enemies
@@ -676,6 +680,10 @@ class SpecialItem(Image):
     self.x = constants.CHARACTER_STORAGE
     self.run = False
 
+"""
+  Class: Heart
+  Description: Adds life to the user.
+"""
 class Heart(SpecialItem):
   def __init__(self, main_character, **kwargs):
     super(Heart, self).__init__(main_character, source=constants.HEART_IMG, **kwargs)
@@ -683,16 +691,24 @@ class Heart(SpecialItem):
   def use_effect(self):
     self.main_character.life_meter.value += 100
 
+"""
+  Class: Candy
+  Description: Adds additional points.
+"""
 class Candy(SpecialItem):
   def __init__(self, main_character, **kwargs):
     super(Candy, self).__init__(main_character, source=constants.CANDY_IMG, **kwargs)
 
   def use_effect(self):
-    self.main_character.score += 100
+    self.main_character.parent.scorer.score += 100
 
+"""
+  Class: Coin
+  Description: Add points.
+"""
 class Coin(SpecialItem):
   def __init__(self, main_character, **kwargs):
     super(Coin, self).__init__(main_character, source=constants.COIN_IMG, **kwargs)
 
   def use_effect(self):
-    self.main_character.score += 10
+    self.main_character.parent.scorer.score += 10
