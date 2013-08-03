@@ -2,6 +2,7 @@ from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 from kivy.uix.image import Image
 from kivy.uix.progressbar import ProgressBar
+from kivy.core.audio import SoundLoader
 from kivy.animation import Animation
 from kivy.core.window import Window
 from kivy.clock import Clock
@@ -30,6 +31,9 @@ class CharacterManager(Widget):
     self.create_special_items()
 
     self.weak_enemies_attack = 0
+    self.sound = SoundLoader.load(constants.AMBIENT_NIGHT_LOOP)
+    self.boss_sound = SoundLoader.load(constants.THEME_LOOP)
+    self.current_sound = self.sound
 
   """
     Method: create_main_character
@@ -149,6 +153,17 @@ class CharacterManager(Widget):
     for item in self.special_items:
       item.on_enter()
 
+    Clock.schedule_interval(self.play_theme_song, 0)
+    self.current_sound = self.sound
+
+  """
+    Method: play_theme_song
+    Description: Plays the theme song.
+  """
+  def play_theme_song(self, dt):
+    if self.current_sound.state == "stop":
+      self.current_sound.play()
+
   """
     Method: on_leave
     Description: Method to be called when the widget exits the game.
@@ -158,6 +173,7 @@ class CharacterManager(Widget):
     Clock.unschedule(self.control_weak_enemies)
     Clock.unschedule(self.control_items)
     Clock.unschedule(self.control_game)
+    Clock.unschedule(self.play_theme_song)
 
     self.main_character.on_leave()
     self.horseman.on_leave()
@@ -165,6 +181,8 @@ class CharacterManager(Widget):
       weak_enemy.on_leave()
     for item in self.special_items:
       item.on_leave()
+
+    self.current_sound.stop()
 
   """
     Method: check_collisions
@@ -252,6 +270,9 @@ class CharacterManager(Widget):
         item.run = False
 
       self.horseman.animate_entrance()
+      self.current_sound = self.boss_sound
+      self.sound.stop()
+      self.current_sound.play()
       Clock.unschedule(self.control_game)
 
   """

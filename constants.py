@@ -60,8 +60,8 @@ HM_LIFE_MAX = 50
 #Generic enemy values
 SECONDS_CHECK = 10
 MOVE_ANIM = 30
-HIT_DMG = 0.5
-MAIN_CHAR_HIT_DMG = 5
+HIT_DMG = 0.2
+MAIN_CHAR_HIT_DMG = 0.3
 #Parallax values
 CLOUD_LEFT_BG = "images/Clouds_01.png"
 CLOUD_RIGHT_BG = "images/Clouds_02.png"
