@@ -24,11 +24,30 @@ class CharacterManager(Widget):
     self.scorer.pos = constants.SCORER_POS
     self.add_widget(self.scorer)
 
+    self.create_horseman_boss()
     self.create_main_character()
     self.create_weak_enemies()
     self.create_special_items()
 
     self.weak_enemies_attack = 0
+
+  """
+    Method: create_main_character
+    Description: Method called to create the avatar to be controlled by the user.
+  """
+  def create_horseman_boss(self):
+    hm_sources = {
+      constants.STAND_RIGHT: constants.HM_STAND_RIGHT,
+      constants.STAND_LEFT: constants.HM_STAND_LEFT,
+      constants.STAND_ATTACK_LEFT: constants.HM_STAND_ATTACK_LEFT,
+      constants.STAND_ATTACK_RIGHT: constants.HM_STAND_ATTACK_RIGHT,
+      constants.RUNNING_LEFT: constants.HM_RUNNING_LEFT,
+      constants.RUNNING_RIGHT: constants.HM_RUNNING_RIGHT,
+      constants.DAMAGED: constants.HM_DAMAGED,
+      constants.DEAD: constants.HM_DEAD
+    }
+    self.horseman = BossCharacter(hm_sources, constants.HM_LIFE_MAX)
+    self.add_widget(self.horseman)
 
   """
     Method: create_main_character
@@ -115,12 +134,14 @@ class CharacterManager(Widget):
   """
   def on_enter(self):
     self.difficulty = self.parent.parent.difficulty
+    self.weak_enemies_attack = 0
+
     Clock.schedule_interval(self.check_collisions, 0)
     Clock.schedule_interval(self.control_weak_enemies, 0.5)
     Clock.schedule_interval(self.control_items, 0.3)
     Clock.schedule_interval(self.control_game, 0)
-    self.weak_enemies_attack = 0
 
+    self.horseman.on_enter()
     self.main_character.on_enter()
     for weak_enemy in self.weak_enemies:
       weak_enemy.on_enter()
@@ -137,7 +158,9 @@ class CharacterManager(Widget):
     Clock.unschedule(self.control_weak_enemies)
     Clock.unschedule(self.control_items)
     Clock.unschedule(self.control_game)
+
     self.main_character.on_leave()
+    self.horseman.on_leave()
     for weak_enemy in self.weak_enemies:
       weak_enemy.on_leave()
     for item in self.special_items:
@@ -155,6 +178,7 @@ class CharacterManager(Widget):
             weak_enemy.damaged()
           else:
             self.main_character.life_meter.decrease_life(weak_enemy.dmg)
+            self.main_character.damaged()
             weak_enemy.reset()
       for item in self.special_items:
         if self.main_character.collide_widget(item):
@@ -199,6 +223,9 @@ class CharacterManager(Widget):
       for item in self.special_items:
         item.reset()
         item.run = False
+
+      self.horseman.animate_entrance()
+      Clock.unschedule(self.control_game)
 
 #---------------------------------------------------------------------------------
 
@@ -467,6 +494,54 @@ class MainCharacter(Character):
       def move_to_game_over(dt):
         App.get_running_app().root.current = constants.GAME_OVER_SCREEN
       Clock.schedule_once(move_to_game_over, 2)
+
+#---------------------------------------------------------------------------------
+"""
+  Class: BossCharacter
+  Description: Boss character that is to be killed by the main character to finish the game.
+"""
+class BossCharacter(Character):
+  """
+    CONSTRUCTOR
+  """
+  activated = BooleanProperty(False)
+  def __init__(self, sources, max_life, **kwargs):
+    super(BossCharacter, self).__init__(sources, max_life, **kwargs)
+    self.pos = (constants.CHARACTER_STORAGE, constants.STANDING_Y)
+
+  """
+    Method: animate_entrance
+    Description: Creates an animated entrance for the boss.
+  """
+  def animate_entrance(self):
+    anim = Animation(x=constants.BOSS_POSITION, duration=1)
+    anim.start(self)
+    def change_back(dt):
+      self.to_right = False
+      self.moving = False
+    Clock.schedule_once(change_back, 1)
+
+  def decide_actions(self, dt):
+    if self.alive and self.activated:
+      print "DECIDE"
+
+  """
+    Method: on_enter
+    Description: Method to be called when the widget enters the game.
+  """
+  def on_enter(self):
+    super(BossCharacter, self).on_enter()
+    Clock.schedule_interval(self.decide_actions, 0.5)
+    self.pos = (constants.CHARACTER_STORAGE, constants.STANDING_Y)
+    self.to_right = False
+
+  """
+    Method: on_leave
+    Description: Method to be called when the widget exits the game.
+  """
+  def on_leave(self):
+    super(MainCharacter, self).on_leave()
+    Clock.unschedule(decide_actions)
 
 #---------------------------------------------------------------------------------
 
