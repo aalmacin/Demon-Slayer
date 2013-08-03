@@ -193,11 +193,13 @@ class CharacterManager(Widget):
       for weak_enemy in self.weak_enemies:
         if self.main_character.collide_widget(weak_enemy):
           if self.main_character.attacking:
+            weak_enemy.die_sound()
             weak_enemy.damaged()
           else:
+            weak_enemy.normal_sound()
+            weak_enemy.reset()
             self.main_character.life_meter.decrease_life(weak_enemy.dmg)
             self.main_character.damaged()
-            weak_enemy.reset()
       for item in self.special_items:
         if self.main_character.collide_widget(item):
           item.use_effect()
@@ -715,20 +717,23 @@ class WeakEnemy(Image):
     self.pos = (constants.CHARACTER_STORAGE, constants.STANDING_Y)
     self.run = False
     self.jumping = False
+    self.hit = False
 
   """
     Method: damaged
     Description: Method that shows the weak enemy damaged.
   """
   def damaged(self):
-    self.source = self.damaged_img
-    self.size = self.texture_size
-    anim = Animation(x=self.x + 200, duration=0.3)
-    anim.start(self)
-    self.run = False
-    def reset_pend(dt):
-      self.reset()
-    Clock.schedule_once(reset_pend, 0.4)
+    if not self.hit:
+      self.hit = True
+      self.source = self.damaged_img
+      self.size = self.texture_size
+      anim = Animation(x=self.x + 200, duration=0.3)
+      anim.start(self)
+      self.run = False
+      def reset_pend(dt):
+        self.reset()
+      Clock.schedule_once(reset_pend, 0.4)
 
   """
     Method: start_running
@@ -780,7 +785,7 @@ class WeakEnemy(Image):
   """
   def die_sound(self):
     if self.die_sounds != None:
-      SoundLoader.load(random.choice(self.die_sounds)).play()
+      SoundLoader.load(self.die_sounds).play()
 
   """
     Method: on_enter
@@ -813,6 +818,7 @@ class WeakEnemy(Image):
     self.pos = (constants.CHARACTER_STORAGE, constants.STANDING_Y)
     self.source = self.the_source
     self.size = self.texture_size
+    self.hit = False
 #---------------------------------------------------------------------------------
 """
   Class: SpecialItem
