@@ -118,6 +118,7 @@ class CharacterManager(Widget):
     Clock.schedule_interval(self.check_collisions, 0)
     Clock.schedule_interval(self.control_weak_enemies, 0.5)
     Clock.schedule_interval(self.control_items, 0.3)
+    Clock.schedule_interval(self.control_game, 0)
     self.weak_enemies_attack = 0
 
     self.main_character.on_enter()
@@ -135,6 +136,7 @@ class CharacterManager(Widget):
     Clock.unschedule(self.check_collisions)
     Clock.unschedule(self.control_weak_enemies)
     Clock.unschedule(self.control_items)
+    Clock.unschedule(self.control_game)
     self.main_character.on_leave()
     for weak_enemy in self.weak_enemies:
       weak_enemy.on_leave()
@@ -179,6 +181,24 @@ class CharacterManager(Widget):
     if res:
       item = random.choice(self.special_items)
       item.run = True
+
+  """
+    Method: control_game
+    Description: Method that controls the game.
+  """
+  def control_game(self, dt):
+    if self.weak_enemies_attack >= constants.ENEMY_MAX:
+      self.main_character.on_battle = True
+      self.main_character.moving = False
+
+      Clock.unschedule(self.control_weak_enemies)
+      Clock.unschedule(self.control_items)
+      for weak_enemy in self.weak_enemies:
+        weak_enemy.reset()
+        weak_enemy.run = False
+      for item in self.special_items:
+        item.reset()
+        item.run = False
 
 #---------------------------------------------------------------------------------
 
@@ -301,13 +321,13 @@ class Character(Image):
   """
   def check_movement_images(self, dt):
     if not self.attacking and not self.hit and self.alive:
-      if to_right:
-        if moving:
+      if self.to_right:
+        if self.moving:
           self.change_src(constants.RUNNING_RIGHT)
         else:
           self.change_src(constants.STAND_RIGHT)
       else:
-        if moving:
+        if self.moving:
           self.change_src(constants.RUNNING_LEFT)
         else:
           self.change_src(constants.STAND_LEFT)
