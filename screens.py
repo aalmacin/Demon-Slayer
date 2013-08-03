@@ -18,7 +18,6 @@ class MainScreen(Screen):
 
   def on_enter(self):
     self.character_manager.on_enter()
-    #self.background.on_enter()
 
   def on_leave(self):
     self.character_manager.on_leave()
@@ -134,6 +133,14 @@ class GameOverScreen(Screen):
     self.quit.size_hint = constants.SMALL_BTN_SIZE
     self.quit.font_size = constants.STANDARD_FNT_SIZE
     self.quit.pos = (1000,100)
+
+    self.final_score = Label(font_size="100px", text="[color=E01B5D]" + constants.FINAL_SCORE_TEXT + "----[/color]", markup=True)
+    self.add_widget(self.final_score)
+
+  def on_enter(self):
+    self.final_score.text = "[color=E01B5D]" + constants.FINAL_SCORE_TEXT + str(self.parent.final_score) + "[/color]"
+    self.x = (constants.WIDTH/2) - (self.final_score.width/2)
+    self.y = (constants.HEIGHT/2) - (self.final_score.height/2)
 
 #when restart button is pressed
   def play_again_btn_pressed(self, instance):

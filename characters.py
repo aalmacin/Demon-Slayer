@@ -254,6 +254,16 @@ class CharacterManager(Widget):
       self.horseman.animate_entrance()
       Clock.unschedule(self.control_game)
 
+  """
+    Method: to_game_over
+    Description: Moves the screen to game over screen
+  """
+  def to_game_over(self, dt):
+    if not self.horseman.alive:
+      self.scorer.score += constants.HM_BOSS_BONUS * self.difficulty
+    App.get_running_app().root.final_score = self.scorer.score
+    App.get_running_app().root.current = constants.GAME_OVER_SCREEN
+
 #---------------------------------------------------------------------------------
 
 """
@@ -531,9 +541,8 @@ class MainCharacter(Character):
   def check_life(self, dt):
     super(MainCharacter, self).check_life(dt)
     if not self.alive:
-      def move_to_game_over(dt):
-        App.get_running_app().root.current = constants.GAME_OVER_SCREEN
-      Clock.schedule_once(move_to_game_over, 2)
+      Clock.unschedule(self.check_life)
+      Clock.schedule_once(self.parent.to_game_over, 2)
 
 #---------------------------------------------------------------------------------
 """
@@ -601,9 +610,8 @@ class BossCharacter(Character):
   def check_life(self, dt):
     super(BossCharacter, self).check_life(dt)
     if not self.alive:
-      def move_to_game_over(dt):
-        App.get_running_app().root.current = constants.GAME_OVER_SCREEN
-      Clock.schedule_once(move_to_game_over, 2)
+      Clock.unschedule(self.check_life)
+      Clock.schedule_once(self.parent.to_game_over, 2)
 
 #---------------------------------------------------------------------------------
 
@@ -676,6 +684,7 @@ class WeakEnemy(Image):
   def __init__(self, source, damaged_img, dmg, speed, normal_sounds=None, die_sounds=None, jumper=False, **kwargs):
     super(WeakEnemy, self).__init__(source=constants.WC_ROCK, x=constants.CHARACTER_STORAGE, y=constants.STANDING_Y)
     self.the_source = source
+    self.initial_dmg = dmg
     self.dmg = dmg
     self.speed = speed
     self.jumper = jumper
@@ -761,7 +770,7 @@ class WeakEnemy(Image):
     self.source = self.the_source
     self.size = self.texture_size
     self.run = False
-    self.dmg *= self.parent.difficulty
+    self.dmg = self.initial_dmg * self.parent.difficulty
     Clock.schedule_interval(self.start_running, 0)
     Clock.schedule_interval(self.check_jumping, 0)
 

@@ -20,6 +20,7 @@ class DemonSlayer(ScreenManager):
   def __init__(self, transition):
     super(ScreenManager, self).__init__(transition=transition)
     self.difficulty = constants.DIFFICULTY_EASY
+    self.final_score = 0
 
     self.start_screen = StartScreen(name=constants.START_SCREEN)
     self.game_over_screen = GameOverScreen(name=constants.GAME_OVER_SCREEN)

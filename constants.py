@@ -35,7 +35,7 @@ MC_STAND_ATTACK_LEFT = "images/KatipuneroStandAttackLeft.png"
 MC_DAMAGED = "images/KatipuneroDamaged.png"
 MC_DEAD = "images/KatipuneroDead.png"
 MC_X = 50
-MC_LIFE_MAX = 200
+MC_LIFE_MAX = 300
 MC_TAUNT_SOUND_1 = "sounds/Katipunero_taunt_1.wav"
 MC_TAUNT_SOUND_2 = "sounds/Katipunero_taunt_2.wav"
 MC_TAUNT_SOUND_3 = "sounds/Katipunero_taunt_3.wav"
@@ -55,11 +55,12 @@ HM_TAUNT_SOUND_2 = "sounds/Tikbalang_taunt_2.wav"
 HM_DIE_SOUND_1 = "sounds/Tikbalang_die_1.wav"
 HM_DIE_SOUND_2 = "sounds/Tikbalang_die_2.wav"
 HM_DIE_SOUND_3 = "sounds/Tikbalang_die_3.wav"
+HM_BOSS_BONUS = 1000
 HM_LIFE_MAX = 50
 #Generic enemy values
 SECONDS_CHECK = 10
 MOVE_ANIM = 30
-HIT_DMG = 7
+HIT_DMG = 0.5
 MAIN_CHAR_HIT_DMG = 5
 #Parallax values
 CLOUD_LEFT_BG = "images/Clouds_01.png"
@@ -130,3 +131,4 @@ COIN_COUNT = 80
 SCORER_POS = (170, 610)
 #Strings
 SCORE_TEXT = "Score: "
+FINAL_SCORE_TEXT = "Final Score: "
