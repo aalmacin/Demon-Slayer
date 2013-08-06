@@ -2,11 +2,13 @@ from kivy.uix.widget import Widget
 from kivy.uix.image import Image
 import constants
 
+#adding paralax to the background to add depth to background
 class ParallaxBG(Widget):
   def __init__(self, **kwargs):
     super(ParallaxBG, self).__init__(**kwargs)
     self.set_images()
-
+    
+  #set images for background and add it as a widget
   def set_images(self):
     self.bg = Image(source=constants.NIGHT_BG)
     self.bg.size = self.bg.texture_size
@@ -20,7 +22,8 @@ class ParallaxBG(Widget):
 
     self.ground_1 = self.left_img(constants.GROUND_SPEED, constants.GROUND_LEFT_BG)
     self.ground_2 = self.right_img(constants.GROUND_RIGHT_BG, self.ground_1)
-
+    
+  #left paralax image
   def left_img(self, speed, img_source):
     initial_pos = (0,0)
     obj = ParallaxIMG(speed, initial_pos, pos=initial_pos, source=img_source)
@@ -28,6 +31,7 @@ class ParallaxBG(Widget):
     self.add_widget(obj)
     return obj
 
+  #right paralax image
   def right_img(self, img_source, left_img):
     initial_pos = (left_img.x + left_img.width, left_img.y)
     obj = ParallaxIMG(left_img.speed, initial_pos, pos=initial_pos, source=img_source)
@@ -35,11 +39,13 @@ class ParallaxBG(Widget):
     self.add_widget(obj)
     return obj
 
+  #move all images
   def move_all(self):
     self.move(self.cloud_1, self.cloud_2)
     self.move(self.barrio_1, self.barrio_2)
     self.move(self.ground_1, self.ground_2)
-
+    
+  #move the object based on where they are in the screen
   def move(self, obj1, obj2):
     if obj1.x >= -obj1.width:
       obj1.x -= obj1.speed
@@ -50,7 +56,8 @@ class ParallaxBG(Widget):
       obj2.x -= obj2.speed
     else:
       obj2.x = obj1.x + obj1.width - obj1.speed
-
+      
+  #reset images
   def reset(self):
     self.cloud_1.reset()
     self.cloud_2.reset()
@@ -58,12 +65,14 @@ class ParallaxBG(Widget):
     self.barrio_2.reset()
     self.ground_1.reset()
     self.ground_2.reset()
-
+    
+#create a paralax image
 class ParallaxIMG(Image):
   def __init__(self, speed, initial_pos, **kwargs):
     super(ParallaxIMG, self).__init__(**kwargs)
     self.initial_pos = initial_pos
     self.speed = speed
-
+    
+  #reset image to initial position
   def reset(self):
     self.pos = self.initial_pos
