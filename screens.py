@@ -7,22 +7,25 @@ from characters import *
 import constants
 from kivy.app import App
 
+ #the screen where the game actually takes place
 class MainScreen(Screen):
   def __init__(self, **kwargs):
     super(MainScreen, self).__init__(**kwargs)
     self.background = ParallaxBG()
     self.character_manager = CharacterManager()
-
+    #add background and character manager to main game screen
     self.add_widget(self.background)
     self.add_widget(self.character_manager)
-
+    
+  
   def on_enter(self):
     self.character_manager.on_enter()
 
   def on_leave(self):
     self.character_manager.on_leave()
     self.background.reset()
-
+    
+#main menu screen
 class StartScreen(Screen):
   def __init__(self, **kwargs):
     super(StartScreen, self).__init__(**kwargs)
