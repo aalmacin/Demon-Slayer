@@ -16,24 +16,28 @@ from kivy.uix.screenmanager import *
 from kivy.base import EventLoop
 import constants
 
+#build a screen manager to include Demon Slayer requirements
 class DemonSlayer(ScreenManager):
   def __init__(self, transition):
     super(ScreenManager, self).__init__(transition=transition)
     self.difficulty = constants.DIFFICULTY_EASY
     self.final_score = 0
 
+    #create screens from screens.py
     self.start_screen = StartScreen(name=constants.START_SCREEN)
     self.game_over_screen = GameOverScreen(name=constants.GAME_OVER_SCREEN)
     self.main_screen = MainScreen(name=constants.MAIN_SCREEN)
     self.instruction_screen = InstructionScreen(name=constants.INSTRUCTION_SCREEN)
     self.difficulty_screen = DifficultyScreen(name=constants.DIFFICULTY_SCREEN)
 
+    #add screens to manager
     self.add_widget(self.start_screen)
     self.add_widget(self.game_over_screen)
     self.add_widget(self.main_screen)
     self.add_widget(self.instruction_screen)
     self.add_widget(self.difficulty_screen)
 
+#game loop in kivy 
 class DemonSlayerApp(App):
   def build(self):
     EventLoop.ensure_window()

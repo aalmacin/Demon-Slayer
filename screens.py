@@ -70,7 +70,8 @@ class StartScreen(Screen):
   #when quit button pressed
   def quit_btn_pressed(self, instance):
     App.get_running_app().stop() #stop app
-
+    
+#instruction screen
 class InstructionScreen(Screen):
   def __init__(self, **kwargs):
     super(InstructionScreen, self).__init__(**kwargs)
@@ -101,7 +102,8 @@ class InstructionScreen(Screen):
   #when go back btton pressed
   def go_back_btn_pressed(self, instance):
     self.parent.current = constants.START_SCREEN
-
+    
+#the screen when the user gets game over
 class GameOverScreen(Screen):
   def __init__(self, **kwargs):
     super(GameOverScreen, self).__init__(**kwargs)
@@ -112,7 +114,7 @@ class GameOverScreen(Screen):
     self.cloud_1 = Image(source = constants.CLOUD_LEFT_BG)
     self.cloud_1.size = self.bg.texture_size
     self.add_widget(self.cloud_1)
-    #button
+    #play again button
     self.play_again_btn = Button(text=constants.GAME_OVER_MSG)
     self.add_widget(self.play_again_btn)
     self.play_again_btn.bind(on_press= self.play_again_btn_pressed)
@@ -136,7 +138,8 @@ class GameOverScreen(Screen):
 
     self.final_score = Label(font_size="100px", text="[color=E01B5D]" + constants.FINAL_SCORE_TEXT + "----[/color]", markup=True)
     self.add_widget(self.final_score)
-
+    
+  #display final score in specified colour
   def on_enter(self):
     self.final_score.text = "[color=E01B5D]" + constants.FINAL_SCORE_TEXT + str(self.parent.final_score) + "[/color]"
     self.x = (constants.WIDTH/2) - (self.final_score.width/2)
@@ -151,7 +154,8 @@ class GameOverScreen(Screen):
   #when quit button pressed
   def quit_btn_pressed(self, instance):
     App.get_running_app().stop() #stop app
-
+    
+#screen to choose difficulty
 class DifficultyScreen(Screen):
   def __init__(self, **kwargs):
     super(DifficultyScreen, self).__init__(**kwargs)
