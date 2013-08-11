@@ -17,14 +17,24 @@ class MainScreen(Screen):
     self.add_widget(self.background)
     self.add_widget(self.character_manager)
     
-  
   def on_enter(self):
     self.character_manager.on_enter()
 
   def on_leave(self):
     self.character_manager.on_leave()
     self.background.reset()
+   
+#splash screen   
+class SplashScreen(Screen):
+  def __init__(self, **kwargs):
+    super(SplashScreen, self).__init__(**kwargs)
+    self.add_widget(Image(source=constants.SPLASH_IMG))
     
+  def on_enter(self):
+    def switch_to_start(dt):
+      self.parent.current = constants.START_SCREEN
+    Clock.schedule_once(switch_to_start, 2)
+  
 #main menu screen
 class StartScreen(Screen):
   def __init__(self, **kwargs):
@@ -182,21 +192,28 @@ class DifficultyScreen(Screen):
     self.easy_choice.bind(on_press= self.easy_btn_pressed)
     self.easy_choice.size_hint = constants.SMALL_BTN_SIZE
     self.easy_choice.font_size = constants.STANDARD_FNT_SIZE
-    self.easy_choice.pos = (1000,260)
+    self.easy_choice.pos = (1000,340)
     #medium button
     self.medium_choice = Button(text="Medium")
     self.add_widget(self.medium_choice)
     self.medium_choice.bind(on_press= self.medium_btn_pressed)
     self.medium_choice.size_hint = constants.SMALL_BTN_SIZE
     self.medium_choice.font_size = constants.STANDARD_FNT_SIZE
-    self.medium_choice.pos = (1000,180)
+    self.medium_choice.pos = (1000,260)
    #hard button
     self.hard_choice = Button(text="Hard")
     self.add_widget(self.hard_choice)
     self.hard_choice.bind(on_press= self.hard_btn_pressed)
     self.hard_choice.size_hint = constants.SMALL_BTN_SIZE
     self.hard_choice.font_size = constants.STANDARD_FNT_SIZE
-    self.hard_choice.pos = (1000,100)
+    self.hard_choice.pos = (1000,180)
+   #extreme button
+    self.extreme_choice = Button(text="Extreme")
+    self.add_widget(self.extreme_choice)
+    self.extreme_choice.bind(on_press= self.extreme_btn_pressed)
+    self.extreme_choice.size_hint = constants.SMALL_BTN_SIZE
+    self.extreme_choice.font_size = constants.STANDARD_FNT_SIZE
+    self.extreme_choice.pos = (1000,100)
     #go back button
     self.go_back = Button(text=constants.GO_BACK_MSG, font_size=constants.SMALL_FNT_SIZE)
     self.add_widget(self.go_back)
@@ -207,15 +224,19 @@ class DifficultyScreen(Screen):
   #when go back btton pressed
   def go_back_btn_pressed(self, instance):
     self.parent.current = constants.START_SCREEN
-  #when start button pressed
+  #when easy button pressed
   def easy_btn_pressed(self, instance):
     self.parent.difficulty = constants.DIFFICULTY_EASY
     self.parent.current = constants.MAIN_SCREEN
-  #when how_to_play button pressed
+  #when medium button pressed
   def medium_btn_pressed(self, instance):
     self.parent.difficulty = constants.DIFFICULTY_MEDIUM
     self.parent.current = constants.MAIN_SCREEN
-  #when quit button pressed
+  #when hard button pressed
   def hard_btn_pressed(self, instance):
     self.parent.difficulty = constants.DIFFICULTY_HARD
+    self.parent.current = constants.MAIN_SCREEN
+  #when extreme button pressed
+  def extreme_btn_pressed(self, instance):
+    self.parent.difficulty = constants.DIFFICULTY_EXTREME
     self.parent.current = constants.MAIN_SCREEN

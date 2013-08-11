@@ -7,16 +7,20 @@ INSTRUCTION_SCREEN = "instruction_screen"
 DIFFICULTY_SCREEN = "difficulty_screen"
 GAME_OVER_SCREEN = "game_over_screen"
 START_SCREEN = "start_screen"
+SPLASH_SCREEN = "splash_screen"
 #messages
 START_MSG = "Start Game"
 HOW_TO_MSG = "How To Play"
 GO_BACK_MSG = "Go Back"
 QUIT_GAME_MSG = "Quit"
 GAME_OVER_MSG = "Play Again"
+#Splash screen values
+SPLASH_IMG = "images/SplashScreen.png"
 #difficulties
 DIFFICULTY_EASY = 1
 DIFFICULTY_MEDIUM = 2
 DIFFICULTY_HARD = 3
+DIFFICULTY_EXTREME = 4
 #button size
 LARGE_BTN_SIZE = (0.5, 0.3)
 STANDARD_BTN_SIZE = (0.4, 0.2)
