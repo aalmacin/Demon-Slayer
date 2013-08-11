@@ -7,12 +7,15 @@ INSTRUCTION_SCREEN = "instruction_screen"
 DIFFICULTY_SCREEN = "difficulty_screen"
 GAME_OVER_SCREEN = "game_over_screen"
 START_SCREEN = "start_screen"
+SPLASH_SCREEN = "splash_screen"
 #messages
 START_MSG = "Start Game"
 HOW_TO_MSG = "How To Play"
 GO_BACK_MSG = "Go Back"
 QUIT_GAME_MSG = "Quit"
 GAME_OVER_MSG = "Play Again"
+#Splash screen values
+SPLASH_IMG = "images/SplashScreen.png"
 #difficulties
 DIFFICULTY_EASY = 1
 DIFFICULTY_MEDIUM = 2

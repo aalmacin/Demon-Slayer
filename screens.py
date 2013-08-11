@@ -17,14 +17,24 @@ class MainScreen(Screen):
     self.add_widget(self.background)
     self.add_widget(self.character_manager)
     
-  
   def on_enter(self):
     self.character_manager.on_enter()
 
   def on_leave(self):
     self.character_manager.on_leave()
     self.background.reset()
+   
+#splash screen   
+class SplashScreen(Screen):
+  def __init__(self, **kwargs):
+    super(SplashScreen, self).__init__(**kwargs)
+    self.add_widget(Image(source=constants.SPLASH_IMG))
     
+  def on_enter(self):
+    def switch_to_start(dt):
+      self.parent.current = constants.START_SCREEN
+    Clock.schedule_once(switch_to_start, 2)
+  
 #main menu screen
 class StartScreen(Screen):
   def __init__(self, **kwargs):
