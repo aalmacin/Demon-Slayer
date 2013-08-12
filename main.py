@@ -27,15 +27,18 @@ class DemonSlayer(ScreenManager):
     self.start_screen = StartScreen(name=constants.START_SCREEN)
     self.game_over_screen = GameOverScreen(name=constants.GAME_OVER_SCREEN)
     self.main_screen = MainScreen(name=constants.MAIN_SCREEN)
+    self.splash_screen = SplashScreen(name=constants.SPLASH_SCREEN)
     self.instruction_screen = InstructionScreen(name=constants.INSTRUCTION_SCREEN)
     self.difficulty_screen = DifficultyScreen(name=constants.DIFFICULTY_SCREEN)
 
     #add screens to manager
     self.add_widget(self.start_screen)
+    self.add_widget(self.splash_screen)
     self.add_widget(self.game_over_screen)
     self.add_widget(self.main_screen)
     self.add_widget(self.instruction_screen)
     self.add_widget(self.difficulty_screen)
+    self.current = constants.SPLASH_SCREEN
 
 #game loop in kivy 
 class DemonSlayerApp(App):
